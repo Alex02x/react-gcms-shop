@@ -1,30 +1,25 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { ProductHero } from "@/components/product-hero"
 import { ProductImageGallery } from "@/components/product-image-gallery"
 import { ProductSidebar } from "@/components/product-sidebar"
 import { ProductDescription } from "@/components/product-description"
 import { ProductReviews } from "@/components/product-reviews"
 
-// Mock data - в будущем заменить на API запрос
-const getProductData = async (id: string) => {
-  // Имитация задержки API
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return {
-    id,
-    title: "Премиум модуль администрирования",
-    category: "GameCMS",
-    subcategory: "Модули",
-    images: [
-      "/game-dashboard-interface.jpg",
-      "/ui-components-kit.jpg",
-      "/admin-dashboard-dark.jpg",
-      "/ecommerce-shopping.png",
-      "/seo-analytics.jpg",
-    ],
-    description: `# Описание модуля
+const EXAMPLE_PRODUCT = {
+  id: "1",
+  title: "Премиум модуль администрирования",
+  category: "GameCMS",
+  subcategory: "Модули",
+  images: [
+    "/game-dashboard-interface.jpg",
+    "/ui-components-kit.jpg",
+    "/admin-dashboard-dark.jpg",
+    "/ecommerce-shopping.png",
+    "/seo-analytics.jpg",
+  ],
+  description: `# Описание модуля
 
 Этот **премиум модуль** предоставляет полнофункциональную систему администрирования для вашего проекта.
 
@@ -50,33 +45,36 @@ const getProductData = async (id: string) => {
 2. Распакуйте в директорию \`modules/\`
 3. Активируйте в панели администратора
 4. Настройте параметры в конфигурации`,
-    author: "DevStudio",
-    version: "2.1.4",
-    downloads: 1284,
-    createdAt: "2024-12-01",
-    price: 2499,
-    originalPrice: 3999,
-    rating: 4.8,
-    reviewsCount: 87,
-    demoUrl: "https://demo.example.com",
-  }
+  author: "DevStudio",
+  version: "2.1.4",
+  downloads: 1284,
+  createdAt: "2024-12-01",
+  price: 2499,
+  originalPrice: 3999,
+  rating: 4.8,
+  reviewsCount: 87,
+  demoUrl: "https://demo.example.com",
 }
 
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+// Пример: const getProductData = async (id: string) => {
+//   const response = await fetch(`/api/products/${id}`)
+//   return response.json()
+// }
+
+export default function ProductPage() {
   const [product, setProduct] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadProduct = async () => {
       setIsLoading(true)
-      const data = await getProductData(id)
-      setProduct(data)
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setProduct(EXAMPLE_PRODUCT)
       setIsLoading(false)
     }
 
     loadProduct()
-  }, [id])
+  }, [])
 
   if (isLoading) {
     return (

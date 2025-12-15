@@ -9,7 +9,7 @@ const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" })
 export const metadata: Metadata = {
   title: "GameCMS.su - Магазин модулей",
   description: "Магазин премиум модулей для GameCMS",
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={`dark ${fontSans.variable}`}>
+    <html lang="ru" className={fontSans.variable}>
       <body className="antialiased">
         <div className="min-h-screen bg-background px-4 py-6">
           <div className="mx-auto max-w-[1280px] space-y-6">

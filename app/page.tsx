@@ -4,6 +4,11 @@ import { useState } from "react"
 import { CategorySidebar } from "@/components/category-sidebar"
 import { ProductGrid } from "@/components/product-grid"
 
+// Пример: const fetchProducts = async (params) => {
+//   const response = await fetch('/api/products', { method: 'POST', body: JSON.stringify(params) })
+//   return response.json()
+// }
+
 export default function ShopPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearching, setIsSearching] = useState(false)
