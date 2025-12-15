@@ -129,13 +129,10 @@ export function ProductReviews({ productId, rating, reviewsCount }: ProductRevie
                   </div>
                 </div>
               </div>
-              <p className="mb-3 text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
-              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-                <ThumbsUp className="h-3.5 w-3.5" />
-                <span className="text-xs">Полезно ({review.likes})</span>
-              </Button>
+              <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
             </div>
           ))}
+          
         </div>
       )}
     </div>

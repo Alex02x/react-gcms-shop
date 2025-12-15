@@ -62,7 +62,7 @@ export function ProductCard({
             className="cursor-pointer border-primary/40 hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all bg-transparent"
             asChild
           >
-            <a href={`/product/${Math.random().toString(36).substring(7)}`}>К товару</a>
+            <a href={`/product/`}>К товару</a>
           </Button>
         </div>
       </CardContent>

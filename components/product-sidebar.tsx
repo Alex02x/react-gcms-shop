@@ -94,7 +94,7 @@ export function ProductSidebar({
             size="lg"
             className="w-full cursor-pointer border-primary/40 hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_16px_rgba(16,185,129,0.3)] transition-all bg-primary/5 border text-foreground"
           >
-            Скачать
+            Купить сейчас
           </Button>
           {demoUrl && (
             <Button
@@ -104,7 +104,7 @@ export function ProductSidebar({
               asChild
             >
               <a href={demoUrl} target="_blank" rel="noopener noreferrer">
-                Демо
+                Посмотреть демо
               </a>
             </Button>
           )}

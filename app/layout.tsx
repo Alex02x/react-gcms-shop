@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ru" className={fontSans.variable}>
-      <body className="antialiased">
+    <html lang="ru">
+      <body className={`antialiased ${fontSans.variable}`}>
         <div className="min-h-screen bg-background px-4 py-6">
           <div className="mx-auto max-w-[1280px] space-y-6">
             <ShopHeader />

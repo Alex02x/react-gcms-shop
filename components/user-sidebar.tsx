@@ -11,8 +11,8 @@ const menuItems = [
     icon: ShoppingBag,
   },
   {
-    title: "История пополнений",
-    href: "/payments",
+    title: "Мой кошелек",
+    href: "/wallet",
     icon: CreditCard,
   },
   {

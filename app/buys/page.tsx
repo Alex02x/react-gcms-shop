@@ -33,31 +33,14 @@ export default function BuysPage() {
       setPurchases([
         {
           id: "1",
-          title: "Система достижений",
+          title: "RCON SHOP - магазин RCON",
           category: "GameCMS",
           subcategory: "Модули",
-          purchaseDate: "15.12.2024",
+          purchaseDate: "16.12.2025",
           downloadUrl: "/downloads/achievements.zip",
-          image: "/game-dashboard-interface.jpg",
+          image: "https://tpl-market.ru/public/uploads/images/product/screenshots/3vcmJ7SyQWfE.jpg",
         },
-        {
-          id: "2",
-          title: "Расширенная статистика",
-          category: "GameCMS",
-          subcategory: "Модули",
-          purchaseDate: "10.12.2024",
-          downloadUrl: "/downloads/stats.zip",
-          image: "/seo-analytics.jpg",
-        },
-        {
-          id: "3",
-          title: "Темная тема Premium",
-          category: "GameCMS",
-          subcategory: "Темы",
-          purchaseDate: "05.12.2024",
-          downloadUrl: "/downloads/dark-theme.zip",
-          image: "/admin-dashboard-dark.jpg",
-        },
+        
       ])
       setIsLoading(false)
     }, 500)
@@ -72,7 +55,7 @@ export default function BuysPage() {
       <div className="flex-1 space-y-4">
         <div className="rounded-2xl border bg-card/50 backdrop-blur-sm p-6">
           <h1 className="text-2xl font-bold">Мои покупки</h1>
-          <p className="text-sm text-muted-foreground mt-1">Все ваши приобретенные модули и темы</p>
+          <p className="text-sm text-muted-foreground mt-1">Все ваши приобретенные товары</p>
         </div>
 
         {isLoading ? (

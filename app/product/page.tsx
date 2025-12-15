@@ -7,52 +7,26 @@ import { ProductSidebar } from "@/components/product-sidebar"
 import { ProductDescription } from "@/components/product-description"
 import { ProductReviews } from "@/components/product-reviews"
 
+
 const EXAMPLE_PRODUCT = {
   id: "1",
-  title: "Премиум модуль администрирования",
+  title: "RCON SHOP - магазин RCON",
   category: "GameCMS",
   subcategory: "Модули",
   images: [
-    "/game-dashboard-interface.jpg",
-    "/ui-components-kit.jpg",
-    "/admin-dashboard-dark.jpg",
-    "/ecommerce-shopping.png",
-    "/seo-analytics.jpg",
+   "https://tpl-market.ru/public/uploads/images/product/screenshots/3vcmJ7SyQWfE.jpg",
+   "https://tpl-market.ru/public/uploads/images/product/screenshots/T2pU7BFbdC41.jpg",
+   "https://tpl-market.ru/public/uploads/images/product/screenshots/QHZcColFy6NX.jpg",
   ],
-  description: `# Описание модуля
-
-Этот **премиум модуль** предоставляет полнофункциональную систему администрирования для вашего проекта.
-
-## Основные возможности
-
-- 🎨 Современный интерфейс с темной темой
-- 📊 Расширенная аналитика и статистика
-- 👥 Управление пользователями и правами доступа
-- 🔧 Гибкие настройки конфигурации
-- 📝 Система логирования действий
-- 🔐 Продвинутая система безопасности
-
-## Технические характеристики
-
-- Совместимость с последними версиями GameCMS
-- Оптимизированный код для высокой производительности
-- Адаптивный дизайн для всех устройств
-- Подробная документация и примеры использования
-
-## Установка
-
-1. Загрузите архив с модулем
-2. Распакуйте в директорию \`modules/\`
-3. Активируйте в панели администратора
-4. Настройте параметры в конфигурации`,
-  author: "DevStudio",
+  description: `тестовое описание 123`,
+  author: "grStas (Станислав Грачев)",
   version: "2.1.4",
   downloads: 1284,
   createdAt: "2024-12-01",
-  price: 2499,
-  originalPrice: 3999,
+  price: 550,
+  originalPrice: 800,
   rating: 4.8,
-  reviewsCount: 87,
+  reviewsCount: 3,
   demoUrl: "https://demo.example.com",
 }
 
