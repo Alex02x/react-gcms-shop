@@ -18,6 +18,8 @@ interface Product {
     download_count: number;
     created_at: string;
     has_discount: boolean;
+    is_purchased: boolean;
+    prevent_repurchase: boolean;
     images: Array<{
         id: number;
         url: string;
@@ -114,7 +116,11 @@ export default function ProductPage({ product }: Props) {
                         price={price}
                         originalPrice={originalPrice}
                         demoUrl={product.demo_url || undefined}
+                        productId={product.id}
+                        productSlug={product.slug}
                         versions={product.versions}
+                        isPurchased={product.is_purchased}
+                        preventRepurchase={product.prevent_repurchase}
                     />
                 </aside>
             </div>

@@ -172,7 +172,7 @@ export default function Wallet({ user, transactions, stats }: PageProps) {
                                                 ? '+'
                                                 : '-'}
                                             {formatBalance(
-                                                transaction.amount / 100,
+                                                Math.abs(transaction.amount) / 100,
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-sm">

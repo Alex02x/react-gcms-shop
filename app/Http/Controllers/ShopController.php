@@ -6,6 +6,7 @@ use App\Models\MainCategory;
 use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ShopController extends Controller
@@ -138,6 +139,9 @@ class ShopController extends Controller
         // Get latest version
         $latestVersion = $product->versions()->where('is_latest', true)->first();
 
+        // Check if user has purchased this product
+        $isPurchased = Auth::check() ? Auth::user()->hasPurchased($product) : false;
+
         return Inertia::render('product', [
             'product' => [
                 'id' => $product->id,
@@ -153,6 +157,8 @@ class ShopController extends Controller
                 'download_count' => $product->download_count,
                 'created_at' => $product->created_at->format('Y-m-d'),
                 'has_discount' => $product->hasDiscount(),
+                'is_purchased' => $isPurchased,
+                'prevent_repurchase' => $product->prevent_repurchase,
                 'images' => $images,
                 'category' => [
                     'name' => $product->subcategory->mainCategory->name,

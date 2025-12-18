@@ -32,6 +32,7 @@ interface Product {
     demo_url: string | null;
     media: Media[];
     subcategory: Subcategory;
+    prevent_repurchase: boolean;
 }
 
 interface PageProps {
@@ -50,6 +51,7 @@ export default function Edit({ product, subcategories }: PageProps) {
         original_price: product.original_price?.toString() || '',
         author: product.author,
         demo_url: product.demo_url || '',
+        prevent_repurchase: product.prevent_repurchase || false,
     });
 
     const [newImages, setNewImages] = useState<File[]>([]);
@@ -327,6 +329,30 @@ export default function Edit({ product, subcategories }: PageProps) {
                                     </p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Prevent Repurchase Checkbox */}
+                        <div className="mt-4">
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={data.prevent_repurchase}
+                                    onChange={(e) =>
+                                        setData(
+                                            'prevent_repurchase',
+                                            e.target.checked,
+                                        )
+                                    }
+                                    className="h-4 w-4 rounded border-gray-300"
+                                />
+                                <span className="text-sm font-medium">
+                                    Prevent Re-purchase
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                    (Users who already own this product cannot
+                                    buy it again)
+                                </span>
+                            </label>
                         </div>
                     </div>
 

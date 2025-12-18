@@ -1,46 +1,44 @@
 import { PurchaseCard } from '@/components/purchase-card';
 import { UserSidebar } from '@/components/user-sidebar';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 interface Purchase {
-    id: string;
-    title: string;
-    category: string;
-    subcategory?: string;
-    purchaseDate: string;
-    downloadUrl?: string;
-    image?: string;
+    id: number;
+    product: {
+        id: number;
+        name: string;
+        slug: string;
+        category: string;
+        subcategory: string;
+        image_url: string | null;
+    };
+    purchase_price: number;
+    formatted_price: string;
+    purchased_at: string;
+    formatted_date: string;
+    can_download: boolean;
 }
 
 export default function BuysPage() {
     const [purchases, setPurchases] = useState<Purchase[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // TODO: Replace with actual Laravel API call
-        // const fetchPurchases = async () => {
-        //   const response = await fetch('/api/user/purchases')
-        //   const data = await response.json()
-        //   setPurchases(data)
-        //   setIsLoading(false)
-        // }
-        // fetchPurchases()
+        const fetchPurchases = async () => {
+            try {
+                const response = await axios.get('/user/purchases');
+                setPurchases(response.data.data);
+            } catch (err: any) {
+                console.error('Failed to fetch purchases:', err);
+                setError('Failed to load your purchases. Please try again.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-        // Mock data for demonstration
-        setTimeout(() => {
-            setPurchases([
-                {
-                    id: '1',
-                    title: 'RCON SHOP - магазин RCON',
-                    category: 'GameCMS',
-                    subcategory: 'Модули',
-                    purchaseDate: '16.12.2025',
-                    downloadUrl: '/downloads/achievements.zip',
-                    image: 'https://tpl-market.ru/public/uploads/images/product/screenshots/3vcmJ7SyQWfE.jpg',
-                },
-            ]);
-            setIsLoading(false);
-        }, 500);
+        fetchPurchases();
     }, []);
 
     return (
@@ -66,6 +64,10 @@ export default function BuysPage() {
                             />
                         ))}
                     </div>
+                ) : error ? (
+                    <div className="rounded-2xl border bg-card/50 p-12 text-center backdrop-blur-sm">
+                        <p className="text-destructive">{error}</p>
+                    </div>
                 ) : purchases.length === 0 ? (
                     <div className="rounded-2xl border bg-card/50 p-12 text-center backdrop-blur-sm">
                         <p className="text-muted-foreground">
@@ -75,7 +77,15 @@ export default function BuysPage() {
                 ) : (
                     <div className="space-y-4">
                         {purchases.map((purchase) => (
-                            <PurchaseCard key={purchase.id} {...purchase} />
+                            <PurchaseCard
+                                key={purchase.id}
+                                id={purchase.id}
+                                title={purchase.product.name}
+                                category={purchase.product.category}
+                                subcategory={purchase.product.subcategory}
+                                purchaseDate={purchase.formatted_date}
+                                image={purchase.product.image_url || undefined}
+                            />
                         ))}
                     </div>
                 )}

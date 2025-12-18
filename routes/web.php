@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWalletController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', function () {
         return Inertia::render('settings');
     })->name('settings');
+
+    // Purchase routes
+    Route::post('/products/{slug}/purchase/initiate', [PurchaseController::class, 'initiate'])->name('purchase.initiate');
+    Route::post('/products/{slug}/purchase/confirm', [PurchaseController::class, 'confirm'])->name('purchase.confirm');
+    Route::get('/user/purchases', [PurchaseController::class, 'index'])->name('user.purchases');
+    Route::get('/purchases/{purchase}/download', [PurchaseController::class, 'download'])->name('purchase.download');
 });
 
 // Admin routes

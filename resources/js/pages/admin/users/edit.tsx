@@ -234,6 +234,8 @@ export default function Edit({ user, roles }: PageProps) {
                                     id="deposit-amount"
                                     type="number"
                                     step="0.01"
+                                    min="0.01"
+                                    required
                                     value={depositForm.data.amount}
                                     onChange={(e) =>
                                         depositForm.setData(
@@ -243,6 +245,11 @@ export default function Edit({ user, roles }: PageProps) {
                                     }
                                     className="mt-1"
                                 />
+                                {depositForm.errors.amount && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {depositForm.errors.amount}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor="deposit-description">
@@ -257,8 +264,14 @@ export default function Edit({ user, roles }: PageProps) {
                                             e.target.value,
                                         )
                                     }
+                                    placeholder="e.g., Initial balance"
                                     className="mt-1"
                                 />
+                                {depositForm.errors.description && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {depositForm.errors.description}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex gap-2">
                                 <Button
@@ -298,6 +311,8 @@ export default function Edit({ user, roles }: PageProps) {
                                     id="withdraw-amount"
                                     type="number"
                                     step="0.01"
+                                    min="0.01"
+                                    required
                                     value={withdrawForm.data.amount}
                                     onChange={(e) =>
                                         withdrawForm.setData(
@@ -307,10 +322,15 @@ export default function Edit({ user, roles }: PageProps) {
                                     }
                                     className="mt-1"
                                 />
+                                {withdrawForm.errors.amount && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {withdrawForm.errors.amount}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <Label htmlFor="withdraw-description">
-                                    Description (required)
+                                    Description (optional)
                                 </Label>
                                 <Input
                                     id="withdraw-description"
@@ -321,8 +341,14 @@ export default function Edit({ user, roles }: PageProps) {
                                             e.target.value,
                                         )
                                     }
+                                    placeholder="e.g., Refund for order #123"
                                     className="mt-1"
                                 />
+                                {withdrawForm.errors.description && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {withdrawForm.errors.description}
+                                    </p>
+                                )}
                             </div>
                             <div className="flex gap-2">
                                 <Button

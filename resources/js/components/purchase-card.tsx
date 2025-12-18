@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Calendar, Download } from 'lucide-react';
 import { useState } from 'react';
+import axios from 'axios';
 
 interface PurchaseCardProps {
-    id: string;
+    id: number;
     title: string;
     category: string;
     subcategory?: string;
@@ -13,6 +14,7 @@ interface PurchaseCardProps {
 }
 
 export function PurchaseCard({
+    id,
     title,
     category,
     subcategory,
@@ -21,20 +23,46 @@ export function PurchaseCard({
     image,
 }: PurchaseCardProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleDownload = async () => {
         setIsLoading(true);
+        setError(null);
 
-        // TODO: Replace with actual Laravel API call
-        // const response = await fetch(`/api/purchases/${id}/download`)
-        // const blob = await response.blob()
-        // Download logic here
+        try {
+            const response = await axios.get(`/purchases/${id}/download`, {
+                responseType: 'blob',
+            });
 
-        setTimeout(() => {
+            // Create blob URL and trigger download
+            const blob = new Blob([response.data]);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+
+            // Extract filename from Content-Disposition header or use default
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = `${title}.zip`;
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (err: any) {
+            console.error('Download failed:', err);
+            setError('Failed to download. Please try again.');
+        } finally {
             setIsLoading(false);
-            // Simulate download
-            console.log('[v0] Downloading:', title);
-        }, 1000);
+        }
     };
 
     return (
@@ -69,6 +97,10 @@ export function PurchaseCard({
                         <Calendar className="h-4 w-4" />
                         <span>Приобретено: {purchaseDate}</span>
                     </div>
+
+                    {error && (
+                        <p className="text-sm text-destructive">{error}</p>
+                    )}
                 </div>
 
                 <Button

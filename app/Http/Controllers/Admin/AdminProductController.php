@@ -85,6 +85,7 @@ class AdminProductController extends Controller
             'demo_url' => 'nullable|url|max:2048',
             'images' => 'nullable|array|max:20',
             'images.*' => 'image|max:10240|mimes:jpeg,jpg,png,gif',
+            'prevent_repurchase' => 'nullable|boolean',
         ]);
 
         $product = Product::create($validated);
@@ -140,6 +141,7 @@ class AdminProductController extends Controller
             'original_price' => 'nullable|numeric|min:0|max:9999999.99|gt:current_price',
             'author' => 'required|string|max:255',
             'demo_url' => 'nullable|url|max:2048',
+            'prevent_repurchase' => 'nullable|boolean',
         ]);
 
         $product->update($validated);

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminWalletController extends Controller
@@ -98,8 +99,12 @@ class AdminWalletController extends Controller
         DB::beginTransaction();
         try {
             $wallet = $user->wallet;
-            
-            $user->deposit($validated['amount'], [
+
+            // Convert amount to smallest unit (cents)
+            $amountInCents = (int) ($validated['amount'] * 100);
+
+            // Deposit using smallest unit (cents)
+            $user->deposit($amountInCents, [
                 'description' => $validated['description'] ?? 'Admin deposit',
                 'admin_user_id' => Auth::id(),
                 'admin_user_name' => Auth::user()->name,
@@ -110,9 +115,16 @@ class AdminWalletController extends Controller
             return redirect()->back()->with('success', 'Funds deposited successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
+            Log::error('Deposit failed', [
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return redirect()->back()->withErrors([
-                'amount' => 'Failed to deposit funds. Please try again.',
+                'amount' => 'Failed to deposit funds: ' . $e->getMessage(),
             ]);
         }
     }
@@ -126,22 +138,27 @@ class AdminWalletController extends Controller
 
         $validated = $request->validate([
             'amount' => ['required', 'numeric', 'min:0.01', 'max:' . ($user->balance / 100)],
-            'description' => ['required', 'string', 'min:10', 'max:500'],
+            'description' => ['nullable', 'string', 'max:500'],
         ]);
 
         DB::beginTransaction();
         try {
             $wallet = $user->wallet;
-            
+
+            // Convert amount to smallest unit (cents)
+            $amountInCents = (int) ($validated['amount'] * 100);
+
             // Check if sufficient balance
-            if ($user->balance < $validated['amount'] * 100) {
+            if ($user->balance < $amountInCents) {
+                DB::rollBack();
                 return redirect()->back()->withErrors([
                     'amount' => 'Insufficient balance. Current balance: ₽' . number_format($user->balance / 100, 2),
                 ]);
             }
 
-            $user->withdraw($validated['amount'], [
-                'description' => $validated['description'],
+            // Withdraw using smallest unit (cents)
+            $user->withdraw($amountInCents, [
+                'description' => $validated['description'] ?? 'Admin withdrawal',
                 'admin_user_id' => Auth::id(),
                 'admin_user_name' => Auth::user()->name,
             ]);
@@ -151,9 +168,16 @@ class AdminWalletController extends Controller
             return redirect()->back()->with('success', 'Funds withdrawn successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
+            Log::error('Withdrawal failed', [
+                'user_id' => $user->id,
+                'amount' => $validated['amount'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return redirect()->back()->withErrors([
-                'amount' => 'Failed to withdraw funds. Please try again.',
+                'amount' => 'Failed to withdraw funds: ' . $e->getMessage(),
             ]);
         }
     }
@@ -176,7 +200,7 @@ class AdminWalletController extends Controller
 
         $callback = function () use ($transactions) {
             $file = fopen('php://output', 'w');
-            
+
             // Add headers
             fputcsv($file, ['ID', 'UUID', 'Type', 'Amount (RUB)', 'Description', 'Confirmed', 'Created At']);
 

@@ -3,19 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Bavix\Wallet\Interfaces\Wallet;
-use Bavix\Wallet\Traits\HasWallet;
+use Bavix\Wallet\Interfaces\Customer;
+use Bavix\Wallet\Traits\CanPay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements Wallet
+class User extends Authenticatable implements Customer
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, HasWallet;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, CanPay;
 
     /**
      * The guard name for permissions.
@@ -81,5 +82,48 @@ class User extends Authenticatable implements Wallet
 
         $name = $this->name ?? $this->email;
         return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=random';
+    }
+
+    /**
+     * Get products purchased by this user.
+     */
+    public function purchasedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_user')
+            ->withPivot(['id', 'purchase_price', 'purchased_at', 'transaction_id'])
+            ->withTimestamps()
+            ->orderBy('product_user.purchased_at', 'desc');
+    }
+
+    /**
+     * Check if user has purchased a specific product.
+     */
+    public function hasPurchased(Product $product): bool
+    {
+        return $this->purchasedProducts()->where('product_id', $product->id)->exists();
+    }
+
+    /**
+     * Get the purchase date for a specific product.
+     */
+    public function getPurchaseDate(Product $product): ?string
+    {
+        $purchase = $this->purchasedProducts()
+            ->where('product_id', $product->id)
+            ->first();
+
+        return $purchase?->pivot->purchased_at;
+    }
+
+    /**
+     * Get the price paid for a specific product.
+     */
+    public function getPurchasePrice(Product $product): ?float
+    {
+        $purchase = $this->purchasedProducts()
+            ->where('product_id', $product->id)
+            ->first();
+
+        return $purchase?->pivot->purchase_price;
     }
 }

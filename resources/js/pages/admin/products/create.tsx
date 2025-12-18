@@ -28,6 +28,7 @@ export default function Create({ subcategories }: PageProps) {
         author: '',
         demo_url: '',
         images: [] as File[],
+        prevent_repurchase: false,
     });
 
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -348,6 +349,30 @@ export default function Create({ subcategories }: PageProps) {
                                     </p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Prevent Repurchase Checkbox */}
+                        <div className="mt-4">
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={data.prevent_repurchase}
+                                    onChange={(e) =>
+                                        setData(
+                                            'prevent_repurchase',
+                                            e.target.checked,
+                                        )
+                                    }
+                                    className="h-4 w-4 rounded border-gray-300"
+                                />
+                                <span className="text-sm font-medium">
+                                    Prevent Re-purchase
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                    (Users who already own this product cannot
+                                    buy it again)
+                                </span>
+                            </label>
                         </div>
                     </div>
 
