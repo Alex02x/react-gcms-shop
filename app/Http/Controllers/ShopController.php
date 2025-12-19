@@ -142,6 +142,21 @@ class ShopController extends Controller
         // Check if user has purchased this product
         $isPurchased = Auth::check() ? Auth::user()->hasPurchased($product) : false;
 
+        // Get user's review if exists
+        $userReview = null;
+        if (Auth::check()) {
+            $userReviewData = $product->reviews()->where('user_id', Auth::id())->first();
+            if ($userReviewData) {
+                $userReview = [
+                    'id' => $userReviewData->id,
+                    'rating' => $userReviewData->rating,
+                    'review_text' => $userReviewData->review_text,
+                    'created_at' => $userReviewData->created_at->toISOString(),
+                    'updated_at' => $userReviewData->updated_at->toISOString(),
+                ];
+            }
+        }
+
         return Inertia::render('product', [
             'product' => [
                 'id' => $product->id,
@@ -187,20 +202,25 @@ class ShopController extends Controller
                     ];
                 }),
                 'reviews' => $product->reviews->map(function ($review) {
+                    $user = Auth::user();
                     return [
                         'id' => $review->id,
                         'rating' => $review->rating,
                         'review_text' => $review->review_text,
-                        'created_at' => $review->created_at->format('Y-m-d'),
+                        'created_at' => $review->created_at->toISOString(),
+                        'updated_at' => $review->updated_at->toISOString(),
                         'user' => [
                             'id' => $review->user->id,
                             'name' => $review->user->name,
                             'avatar' => $review->user->avatar,
                         ],
+                        'can_edit' => $user && $user->id === $review->user_id,
+                        'can_delete' => $user && ($user->id === $review->user_id || $user->hasPermissionTo('manage-reviews')),
                     ];
                 }),
                 'average_rating' => $product->averageRating(),
                 'reviews_count' => $product->reviews->count(),
+                'user_review' => $userReview,
             ],
         ]);
     }

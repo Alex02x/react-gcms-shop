@@ -54,14 +54,24 @@ interface Product {
         rating: number;
         review_text: string;
         created_at: string;
+        updated_at: string;
         user: {
             id: number;
             name: string;
-            avatar: string;
+            avatar: string | null;
         };
+        can_edit: boolean;
+        can_delete: boolean;
     }>;
     average_rating: number;
     reviews_count: number;
+    user_review: {
+        id: number;
+        rating: number;
+        review_text: string;
+        created_at: string;
+        updated_at: string;
+    } | null;
 }
 
 interface Props {
@@ -95,9 +105,12 @@ export default function ProductPage({ product }: Props) {
                     <ProductImageGallery images={imageUrls} title={product.name} />
                     <ProductDescription content={product.long_description} />
                     <ProductReviews
-                        productId={product.id.toString()}
-                        rating={product.average_rating}
+                        productSlug={product.slug}
+                        isPurchased={product.is_purchased}
+                        initialReviews={product.reviews}
+                        averageRating={product.average_rating}
                         reviewsCount={product.reviews_count}
+                        userReview={product.user_review}
                     />
                 </main>
 

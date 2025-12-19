@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\LoginToken;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -36,10 +37,17 @@ class MagicLinkService
 
         try {
             // Find or create user
+            $isNewUser = !User::where('email', $email)->exists();
+
             $user = User::firstOrCreate(
                 ['email' => $email],
                 ['name' => explode('@', $email)[0]]
             );
+
+            // Fire Registered event for new users
+            if ($isNewUser) {
+                event(new Registered($user));
+            }
 
             // Invalidate any existing unused tokens for this user
             LoginToken::where('user_id', $user->id)

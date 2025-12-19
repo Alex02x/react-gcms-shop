@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWalletController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,6 +24,9 @@ Route::get('/', [ShopController::class, 'index'])->name('home');
 
 // Product details page
 Route::get('/products/{slug}', [ShopController::class, 'show'])->name('product.show');
+
+// Public review routes
+Route::get('/products/{slug}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
 // Protected user pages
 Route::middleware('auth')->group(function () {
@@ -43,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{slug}/purchase/confirm', [PurchaseController::class, 'confirm'])->name('purchase.confirm');
     Route::get('/user/purchases', [PurchaseController::class, 'index'])->name('user.purchases');
     Route::get('/purchases/{purchase}/download', [PurchaseController::class, 'download'])->name('purchase.download');
+
+    // Review routes
+    Route::post('/products/{slug}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // Admin routes

@@ -92,17 +92,20 @@ class PurchaseController extends Controller
             }
 
             // Execute wallet payment with product description
-            $transfer = $user->pay($product, [
-                'description' => 'Purchase: ' . $product->name,
+            // Use withdraw instead of pay since we just need to deduct from user's wallet
+            // We're not transferring to the product's wallet
+            $transaction = $user->withdraw($productPrice, [
+                'description' => 'Покупка: ' . $product->name,
                 'product_id' => $product->id,
                 'product_name' => $product->name,
+                'purchase_type' => 'product_purchase',
             ]);
 
             // Create purchase record
             $purchaseData = [
                 'purchase_price' => $productPrice / 100, // Store in main unit
                 'purchased_at' => now(),
-                'transaction_id' => $transfer->id,
+                'transaction_id' => $transaction->id,
             ];
 
             $user->purchasedProducts()->attach($product->id, $purchaseData);
@@ -127,7 +130,7 @@ class PurchaseController extends Controller
                 ],
                 'new_balance' => $user->balanceInt / 100,
                 'formatted_balance' => number_format($user->balanceInt / 100, 2) . ' ₽',
-                'transaction_uuid' => $transfer->uuid,
+                'transaction_uuid' => $transaction->uuid,
             ]);
 
         } catch (\Exception $e) {

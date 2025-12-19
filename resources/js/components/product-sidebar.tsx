@@ -210,7 +210,7 @@ export function ProductSidebar({
                             </Button>
                             {isPurchased && (
                                 <p className="text-center text-sm text-muted-foreground">
-                                    Вы уже покупали этот товар
+                                    Вы уже покупали этот товар<p>Этот товар доступен к покупке снова</p>
                                 </p>
                             )}
                         </>
