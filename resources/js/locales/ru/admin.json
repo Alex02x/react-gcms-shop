@@ -1,0 +1,246 @@
+{
+  "common": {
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "confirm": "Подтвердить",
+    "create": "Создать",
+    "back": "Назад",
+    "actions": "Действия",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "submit": "Отправить",
+    "update": "Обновить",
+    "loading": "Загрузка...",
+    "saving": "Сохранение...",
+    "deleting": "Удаление..."
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "users": "Пользователи",
+    "products": "Продукты",
+    "categories": "Категории",
+    "roles": "Роли и разрешения",
+    "settings": "Настройки"
+  },
+  "users": {
+    "title": "Управление пользователями",
+    "list_title": "Пользователи",
+    "edit_title": "Редактировать пользователя",
+    "create_title": "Создать пользователя",
+    "table": {
+      "user": "Пользователь",
+      "email": "Email",
+      "roles": "Роли",
+      "balance": "Баланс",
+      "registered": "Зарегистрирован",
+      "actions": "Действия"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "wallet": "Кошелёк",
+      "delete": "Удалить",
+      "confirm_delete": "Подтвердить",
+      "cancel_delete": "Отмена"
+    },
+    "pagination": {
+      "showing": "Показано {{count}} из {{total}} пользователей"
+    },
+    "form": {
+      "name": "Имя",
+      "email": "Email",
+      "password": "Пароль",
+      "password_hint": "оставьте пустым, чтобы сохранить текущий",
+      "roles": "Роли",
+      "select_roles": "Выберите роли",
+      "avatar": "Аватар",
+      "upload_avatar": "Загрузить аватар"
+    },
+    "wallet": {
+      "title": "Управление кошельком",
+      "user_balance": "Баланс пользователя",
+      "current_balance": "Текущий баланс",
+      "deposit": "Пополнить средства",
+      "withdraw": "Списать средства",
+      "amount": "Сумма",
+      "description": "Описание",
+      "description_optional": "Описание (необязательно)",
+      "deposit_placeholder": "например, Начальный баланс",
+      "withdraw_placeholder": "например, Возврат за заказ #123",
+      "deposit_button": "Пополнить",
+      "withdraw_button": "Списать",
+      "transaction_history": "История транзакций",
+      "type": "Тип",
+      "date": "Дата",
+      "status": "Статус",
+      "no_transactions": "Транзакций пока нет"
+    }
+  },
+  "products": {
+    "title": "Управление продуктами",
+    "list_title": "Продукты",
+    "create_title": "Создать продукт",
+    "edit_title": "Редактировать продукт",
+    "table": {
+      "product": "Продукт",
+      "category": "Категория",
+      "price": "Цена",
+      "status": "Статус",
+      "views": "Просмотры",
+      "downloads": "Скачивания",
+      "actions": "Действия"
+    },
+    "actions": {
+      "view": "Просмотр",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "versions": "Версии",
+      "create_version": "Создать версию"
+    },
+    "form": {
+      "basic_info": "Основная информация",
+      "product_name": "Название продукта",
+      "product_name_required": "Название продукта *",
+      "category": "Категория",
+      "subcategory": "Подкатегория",
+      "select_category": "Выберите категорию",
+      "select_subcategory": "Выберите подкатегорию",
+      "slug": "Slug",
+      "slug_hint": "URL-идентификатор",
+      "author": "Автор",
+      "short_description": "Краткое описание",
+      "short_description_hint": "Краткое описание продукта (макс. 1000 символов)",
+      "char_count": "{{current}}/{{max}} символов",
+      "full_description": "Полное описание",
+      "full_description_hint": "Полное описание продукта с функциями",
+      "pricing": "Цены",
+      "current_price": "Текущая цена (₽)",
+      "current_price_required": "Текущая цена (₽) *",
+      "original_price": "Первоначальная цена (₽)",
+      "original_price_hint": "необязательно, для отображения скидки",
+      "demo": "Демо",
+      "demo_url": "URL демо",
+      "demo_url_optional": "URL демо (необязательно)",
+      "images": "Изображения продукта",
+      "images_count": "{{current}}/{{max}} изображений",
+      "upload_images": "Загрузить изображения",
+      "upload_images_hint": "Нажмите или перетащите изображения сюда",
+      "upload_images_formats": "PNG, JPG, GIF до 2МБ каждое",
+      "settings": "Настройки",
+      "prevent_repurchase": "Запретить повторную покупку",
+      "prevent_repurchase_hint": "Пользователи не могут купить этот продукт более одного раза",
+      "version_info": "Информация о версии",
+      "version_number": "Номер версии",
+      "version_number_hint": "Семантическая версия (например, 1.0.0, 2.1.3)",
+      "version_name": "Название версии",
+      "changelog": "Список изменений",
+      "changelog_required": "Список изменений *",
+      "file_upload": "Загрузка файла",
+      "download_file": "Скачать файл",
+      "upload_file": "Загрузить файл",
+      "upload_file_required": "Загрузить файл (Обязательно для новых версий)"
+    },
+    "versions": {
+      "title": "Управление версиями",
+      "list_title": "Версии продукта",
+      "create_title": "Создать новую версию",
+      "edit_title": "Редактировать версию",
+      "latest_badge": "Последняя",
+      "table": {
+        "version": "Версия",
+        "name": "Название",
+        "downloads": "Скачивания",
+        "released": "Выпущена",
+        "actions": "Действия"
+      }
+    }
+  },
+  "categories": {
+    "title": "Управление категориями",
+    "main_categories": "Основные категории",
+    "subcategories": "Подкатегории",
+    "create_main": "Создать основную категорию",
+    "create_sub": "Создать подкатегорию",
+    "edit_main": "Редактировать основную категорию",
+    "edit_sub": "Редактировать подкатегорию",
+    "form": {
+      "name": "Название",
+      "name_required": "Название *",
+      "slug": "Slug",
+      "slug_hint": "URL-идентификатор",
+      "description": "Описание",
+      "description_optional": "Описание (необязательно)",
+      "parent_category": "Родительская категория",
+      "icon": "Иконка",
+      "icon_optional": "Иконка (необязательно)"
+    },
+    "table": {
+      "name": "Название",
+      "slug": "Slug",
+      "products_count": "Продукты",
+      "subcategories_count": "Подкатегории",
+      "actions": "Действия"
+    },
+    "actions": {
+      "add_subcategory": "Добавить подкатегорию",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "confirm_delete": "Вы уверены, что хотите удалить эту категорию?",
+      "confirm_delete_sub": "Вы уверены, что хотите удалить эту подкатегорию?"
+    }
+  },
+  "roles": {
+    "title": "Роли и разрешения",
+    "list_title": "Роли",
+    "create_title": "Создать роль",
+    "edit_title": "Редактировать роль",
+    "form": {
+      "name": "Название роли",
+      "name_required": "Название роли *",
+      "permissions": "Разрешения",
+      "select_permissions": "Выберите разрешения",
+      "select_all": "Выбрать все",
+      "deselect_all": "Снять все"
+    },
+    "table": {
+      "name": "Название",
+      "permissions_count": "Разрешения",
+      "users_count": "Пользователи",
+      "actions": "Действия"
+    },
+    "permissions": {
+      "users": "Управление пользователями",
+      "manage_users": "Управлять пользователями",
+      "products": "Управление продуктами",
+      "edit_products": "Редактировать продукты",
+      "categories": "Управление категориями",
+      "edit_categories": "Редактировать категории",
+      "reviews": "Управление отзывами",
+      "manage_reviews": "Управлять отзывами",
+      "roles": "Управление ролями",
+      "manage_roles": "Управлять ролями",
+      "wallets": "Управление кошельками",
+      "manage_wallets": "Управлять кошельками"
+    }
+  },
+  "messages": {
+    "success": {
+      "created": "{{item}} успешно создан",
+      "updated": "{{item}} успешно обновлён",
+      "deleted": "{{item}} успешно удалён",
+      "saved": "Изменения успешно сохранены"
+    },
+    "error": {
+      "create_failed": "Не удалось создать {{item}}",
+      "update_failed": "Не удалось обновить {{item}}",
+      "delete_failed": "Не удалось удалить {{item}}",
+      "load_failed": "Не удалось загрузить данные",
+      "generic": "Произошла ошибка. Пожалуйста, попробуйте еще раз."
+    },
+    "confirm": {
+      "delete": "Вы уверены, что хотите удалить этот {{item}}?",
+      "unsaved_changes": "У вас есть несохранённые изменения. Вы уверены, что хотите выйти?"
+    }
+  }
+}

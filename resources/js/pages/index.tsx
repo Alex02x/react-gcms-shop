@@ -4,6 +4,7 @@ import { ProductCard } from '@/components/product-card';
 import { router } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Category {
     id: number;
@@ -61,6 +62,7 @@ interface Props {
 }
 
 export default function ShopPage({ categories, products, filters }: Props) {
+    const { t } = useTranslation('common');
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -119,9 +121,9 @@ export default function ShopPage({ categories, products, filters }: Props) {
                 </div>
                 <main className="flex-1">
                     <div className="mb-6">
-                        <h1 className="text-3xl font-bold">Каталог товаров</h1>
+                        <h1 className="text-3xl font-bold">{t('shop.catalog_title')}</h1>
                         <p className="mt-2 text-muted-foreground">
-                            Найдите идеальное решение для вашего проекта
+                            {t('shop.catalog_description')}
                         </p>
                     </div>
 
@@ -133,8 +135,8 @@ export default function ShopPage({ categories, products, filters }: Props) {
                                 )}
                                 <span>
                                     {isSearching
-                                        ? 'Загрузка...'
-                                        : `Найдено товаров: ${products.total}`}
+                                        ? t('shop.loading')
+                                        : t('shop.products_found', { count: products.total })}
                                 </span>
                             </div>
                         )}
@@ -167,7 +169,7 @@ export default function ShopPage({ categories, products, filters }: Props) {
                         ) : (
                             <div className="py-12 text-center">
                                 <p className="text-muted-foreground">
-                                    Товары не найдены
+                                    {t('shop.no_products')}
                                 </p>
                             </div>
                         )}

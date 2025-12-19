@@ -12,10 +12,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import type { PageProps } from '@/types/auth';
 import { router, usePage } from '@inertiajs/react';
-import { ChevronDown, LogOut, Shield, ShoppingBag } from 'lucide-react';
+import { ChevronDown, CircleDollarSign, Cog, LogOut, Plus, Shield, ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function ShopHeader() {
+    const { t } = useTranslation('common');
     const [authModalOpen, setAuthModalOpen] = useState(false);
     const { auth } = usePage<PageProps>().props;
     const user = auth.user;
@@ -28,6 +30,11 @@ export function ShopHeader() {
         'edit-categories',
         'manage-wallets',
     ]);
+
+    const formatBalance = (balance?: number) => {
+        if (!balance) return '0.00';
+        return (balance / 100).toFixed(2);
+    };
 
     const handleLogout = async () => {
         await fetch('/auth/logout', {
@@ -45,12 +52,33 @@ export function ShopHeader() {
                 <div className="flex h-16 items-center justify-between px-6">
                     <a href="/" className="flex items-center gap-2">
                         <span className="text-xl font-semibold">
-                            GameCMS.su
+                            {t('header.site_name')}
                         </span>
                     </a>
 
                     <div className="flex items-center gap-2">
                         <ThemeToggle />
+                        {user && (
+                            <>
+                                {/* Balance Display with Top-up Button */}
+                                <div className="flex h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-3 backdrop-blur-sm">
+                                    <CircleDollarSign className="h-4 w-4 text-primary" />
+                                    <span className="text-sm font-semibold tabular-nums text-foreground">
+                                        {formatBalance(user.balance)} ₽
+                                    </span>
+                                    <div className="ml-0.5 h-4 w-px bg-primary/20" />
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-5 w-5 rounded-full p-0 text-primary hover:bg-primary/20 hover:text-primary"
+                                        onClick={() => router.visit('/wallet')}
+                                        title="Пополнить баланс"
+                                    >
+                                        <Plus className="h-3.5 w-3.5" />
+                                    </Button>
+                                </div>
+                            </>
+                        )}
                         {user ? (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -87,7 +115,7 @@ export function ShopHeader() {
                                                     className="flex cursor-pointer items-center gap-2"
                                                 >
                                                     <Shield className="h-4 w-4" />
-                                                    Админ панель
+                                                    {t('header.admin_panel')}
                                                 </a>
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
@@ -99,7 +127,16 @@ export function ShopHeader() {
                                             className="flex cursor-pointer items-center gap-2"
                                         >
                                             <ShoppingBag className="h-4 w-4" />
-                                            Мои покупки
+                                            {t('header.my_purchases')}
+                                        </a>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <a
+                                            href="/settings"
+                                            className="flex cursor-pointer items-center gap-2"
+                                        >
+                                            <Cog className="h-4 w-4" />
+                                            Настройки профиля
                                         </a>
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
@@ -108,7 +145,7 @@ export function ShopHeader() {
                                         className="flex cursor-pointer items-center gap-2 text-red-600"
                                     >
                                         <LogOut className="h-4 w-4" />
-                                        Выйти
+                                        {t('header.logout')}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -118,7 +155,7 @@ export function ShopHeader() {
                                 className="cursor-pointer border-primary/30 bg-transparent transition-all hover:border-primary/50 hover:bg-primary/10"
                                 onClick={() => setAuthModalOpen(true)}
                             >
-                                Войти
+                                {t('header.login_button')}
                             </Button>
                         )}
                     </div>

@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Link } from '@inertiajs/react';
 import { Star } from 'lucide-react';
 import { ImageSlider } from './image-slider';
+import { useTranslation } from 'react-i18next';
 
 interface ProductCardProps {
     title: string;
@@ -28,6 +29,7 @@ export function ProductCard({
     subcategory,
     slug,
 }: ProductCardProps) {
+    const { t } = useTranslation('products');
     const discount = originalPrice
         ? Math.round(((originalPrice - price) / originalPrice) * 100)
         : 0;
@@ -64,7 +66,7 @@ export function ProductCard({
                 </p>
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex items-baseline gap-1.5">
-                        <span className="text-lg font-bold">{price} ₽</span>
+                        <span className="text-lg font-bold">{price > 0 ? price + ' ₽' : <span className="inline-block animate-gradient bg-gradient-to-r from-primary via-emerald-400 to-primary bg-[length:200%_auto] bg-clip-text text-md font-bold text-transparent">Бесплатно ✨</span>}</span>
                         {originalPrice && (
                             <span className="text-xs text-muted-foreground line-through">
                                 {originalPrice} ₽
@@ -77,7 +79,7 @@ export function ProductCard({
                         className="cursor-pointer border-primary/40 bg-transparent transition-all hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_12px_rgba(16,185,129,0.3)]"
                         asChild
                     >
-                        <Link href={`/products/${slug}`}>К товару</Link>
+                        <Link href={`/products/${slug}`}>{t('card.view_product')}</Link>
                     </Button>
                 </div>
             </CardContent>

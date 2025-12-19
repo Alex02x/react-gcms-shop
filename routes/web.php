@@ -1,15 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminPaymentSettingsController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProductVersionController;
 use App\Http\Controllers\Admin\AdminRoleController;
+use App\Http\Controllers\Admin\AdminTelegramSettingsController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminWalletController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -34,9 +39,7 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('buys');
     })->name('buys');
 
-    Route::get('/wallet', function () {
-        return Inertia::render('wallet');
-    })->name('wallet');
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet');
 
     Route::get('/settings', function () {
         return Inertia::render('settings');
@@ -52,7 +55,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{slug}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    // Telegram routes
+    Route::post('/telegram/generate-token', [TelegramController::class, 'generateToken'])->name('telegram.generate-token');
+    Route::get('/telegram/status', [TelegramController::class, 'checkStatus'])->name('telegram.status');
+    Route::post('/telegram/unlink', [TelegramController::class, 'unlink'])->name('telegram.unlink');
+    Route::post('/telegram/verify-subscription', [TelegramController::class, 'verifySubscription'])->name('telegram.verify-subscription');
+
+    // Payment routes
+    Route::post('/wallet/top-up/initiate', [PaymentController::class, 'initiateTopUp'])->name('wallet.top-up.initiate');
+    Route::get('/wallet/top-up/callback', [PaymentController::class, 'callback'])->name('wallet.top-up.callback');
+    Route::get('/wallet/top-up/history', [PaymentController::class, 'history'])->name('wallet.top-up.history');
 });
+
+// Telegram webhook (no auth required)
+Route::post('/api/telegram/webhook', [TelegramController::class, 'webhook'])->name('telegram.webhook');
+
+// YooKassa webhook (no auth required, but IP validated)
+Route::post('/api/yookassa/webhook', [PaymentController::class, 'webhook'])
+    ->middleware(\App\Http\Middleware\ValidateYooKassaWebhook::class)
+    ->name('payment.webhook');
 
 // Admin routes
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
@@ -115,5 +137,22 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::delete('/products/{product}/versions/{version}', [AdminProductVersionController::class, 'destroy'])->name('products.versions.destroy');
         Route::post('/products/{product}/versions/{version}/archive', [AdminProductVersionController::class, 'uploadArchive'])->name('products.versions.archive');
         Route::post('/products/{product}/versions/{version}/toggle-latest', [AdminProductVersionController::class, 'toggleLatest'])->name('products.versions.toggle-latest');
+    });
+
+    // Telegram Settings Routes
+    Route::middleware('permission:manage-wallets')->group(function () {
+        Route::get('/telegram/settings', [AdminTelegramSettingsController::class, 'index'])->name('telegram.settings.index');
+        Route::post('/telegram/settings', [AdminTelegramSettingsController::class, 'update'])->name('telegram.settings.update');
+        Route::post('/telegram/test-connection', [AdminTelegramSettingsController::class, 'testConnection'])->name('telegram.test-connection');
+        Route::get('/telegram/settings/current', [AdminTelegramSettingsController::class, 'getSettings'])->name('telegram.settings.get');
+    });
+
+    // Payment Settings Routes
+    Route::middleware('permission:manage-wallets')->group(function () {
+        Route::get('/payment/settings', [AdminPaymentSettingsController::class, 'index'])->name('payment.settings.index');
+        Route::post('/payment/settings', [AdminPaymentSettingsController::class, 'update'])->name('payment.settings.update');
+        Route::post('/payment/test-connection', [AdminPaymentSettingsController::class, 'testConnection'])->name('payment.test-connection');
+        Route::get('/payment/settings/current', [AdminPaymentSettingsController::class, 'getSettings'])->name('payment.settings.get');
+        Route::get('/payment/payments', [AdminPaymentSettingsController::class, 'payments'])->name('payment.payments');
     });
 });

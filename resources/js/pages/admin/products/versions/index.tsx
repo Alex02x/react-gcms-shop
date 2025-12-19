@@ -1,6 +1,9 @@
 import AdminLayout from '@/layouts/admin-layout';
-import { Link } from '@inertiajs/react';
-import { Package, Plus } from 'lucide-react';
+import { ConfirmationModal } from '@/components/confirmation-modal';
+import { Link, router } from '@inertiajs/react';
+import { Edit, Package, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ProductVersion {
     id: number;
@@ -23,12 +26,29 @@ interface PageProps {
 }
 
 export default function Index({ product, versions }: PageProps) {
+    const { t } = useTranslation('products');
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [versionToDelete, setVersionToDelete] = useState<{ id: number; version: string } | null>(null);
+
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
         });
+    };
+
+    const handleDelete = (versionId: number, versionNumber: string) => {
+        setVersionToDelete({ id: versionId, version: versionNumber });
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (!versionToDelete) return;
+        router.delete(
+            `/admin/products/${product.id}/versions/${versionToDelete.id}`,
+        );
+        setVersionToDelete(null);
     };
 
     return (
@@ -94,12 +114,27 @@ export default function Index({ product, versions }: PageProps) {
                                 </div>
                             </div>
 
-                            <Link
-                                href={`/admin/products/${product.id}/versions/${version.id}/edit`}
-                                className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
-                            >
-                                Edit
-                            </Link>
+                            <div className="flex items-center gap-2">
+                                <Link
+                                    href={`/admin/products/${product.id}/versions/${version.id}/edit`}
+                                    className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent"
+                                >
+                                    <Edit className="h-4 w-4" />
+                                    Edit
+                                </Link>
+                                <button
+                                    onClick={() =>
+                                        handleDelete(
+                                            version.id,
+                                            version.version_number,
+                                        )
+                                    }
+                                    className="inline-flex items-center gap-1 rounded-md border border-destructive px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
 
@@ -123,6 +158,17 @@ export default function Index({ product, versions }: PageProps) {
                     )}
                 </div>
             </div>
+
+            <ConfirmationModal
+                open={deleteConfirmOpen}
+                onOpenChange={setDeleteConfirmOpen}
+                onConfirm={confirmDelete}
+                title="Удалить версию"
+                description={`Вы уверены, что хотите удалить версию "${versionToDelete?.version}"? Это действие нельзя отменить.`}
+                confirmText="Удалить"
+                cancelText="Отмена"
+                variant="destructive"
+            />
         </AdminLayout>
     );
 }

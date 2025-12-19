@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\SystemConfiguration;
+use App\Services\TelegramService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +13,13 @@ use Illuminate\Support\Facades\Log;
 
 class PurchaseController extends Controller
 {
+    protected TelegramService $telegramService;
+
+    public function __construct(TelegramService $telegramService)
+    {
+        $this->telegramService = $telegramService;
+    }
+
     /**
      * Initiate purchase - Check balance and return purchase preview.
      */
@@ -20,6 +29,41 @@ class PurchaseController extends Controller
 
         // Find product by slug
         $product = Product::where('slug', $slug)->firstOrFail();
+
+        // Check if free product requires Telegram subscription
+        if ($product->current_price == 0 && $product->require_telegram_subscription) {
+            // Check if Telegram is configured
+            if (!SystemConfiguration::isConfigured()) {
+                return response()->json([
+                    'can_purchase' => false,
+                    'requires_telegram' => true,
+                    'telegram_status' => 'not_configured',
+                    'error' => 'Telegram integration is not configured.',
+                ], 400);
+            }
+
+            // Check if user has linked Telegram
+            if (!$user->hasTelegramLinked()) {
+                return response()->json([
+                    'can_purchase' => false,
+                    'requires_telegram' => true,
+                    'telegram_status' => 'not_linked',
+                    'channel_link' => SystemConfiguration::getChannelLink(),
+                ]);
+            }
+
+            // Check if user is subscribed to channel
+            $isSubscribed = $this->telegramService->verifyChannelMembership($user->telegram_user_id);
+            
+            if (!$isSubscribed) {
+                return response()->json([
+                    'can_purchase' => false,
+                    'requires_telegram' => true,
+                    'telegram_status' => 'not_subscribed',
+                    'channel_link' => SystemConfiguration::getChannelLink(),
+                ]);
+            }
+        }
 
         // Get user balance (in smallest unit - cents)
         $userBalance = $user->balanceInt;
@@ -32,6 +76,7 @@ class PurchaseController extends Controller
 
         $response = [
             'can_purchase' => $canPurchase,
+            'requires_telegram' => false,
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,

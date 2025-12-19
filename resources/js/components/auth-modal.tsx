@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import type { AuthResponse, ErrorResponse } from '@/types/auth';
 import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AuthModalProps {
     open: boolean;
@@ -21,6 +22,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
+    const { t } = useTranslation('auth');
     const [step, setStep] = useState<'email' | 'code'>('email');
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
@@ -62,7 +64,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 } else {
                     setError(
                         errorData.message ||
-                            'Ошибка отправки кода. Попробуйте еще раз.',
+                            t('errors.send_code_failed'),
                     );
                 }
                 return;
@@ -71,7 +73,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             setStep('code');
             setResendCooldown(60);
         } catch (err) {
-            setError('Ошибка соединения. Проверьте свое интернет-соединение.');
+            setError(t('errors.connection_error'));
         } finally {
             setIsLoading(false);
         }
@@ -101,7 +103,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 } else {
                     setError(
                         errorData.message ||
-                            'Неверный код. Попробуйте еще раз.',
+                            t('errors.verify_code_failed'),
                     );
                 }
                 return;
@@ -116,7 +118,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 setError(null);
             }, 300);
         } catch (err) {
-            setError('Ошибка соединения. Проверьте свое интернет-соединение.');
+            setError(t('errors.connection_error'));
         } finally {
             setIsLoading(false);
         }
@@ -144,13 +146,13 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 const errorData = data as ErrorResponse;
                 setError(
                     errorData.message ||
-                        'Ошибка отправки кода. Попробуйте еще раз.',
+                        t('errors.send_code_failed'),
                 );
             } else {
                 setResendCooldown(60);
             }
         } catch (err) {
-            setError('Ошибка соединения. Проверьте свое интернет-соединение.');
+            setError(t('errors.connection_error'));
         } finally {
             setIsLoading(false);
         }
@@ -175,10 +177,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                 {step === 'email' ? (
                     <>
                         <DialogHeader>
-                            <DialogTitle>Авторизация</DialogTitle>
+                            <DialogTitle>{t('modal.email_step_title')}</DialogTitle>
                             <DialogDescription>
-                                Введите ваш email для получения кода
-                                подтверждения
+                                {t('modal.email_step_description')}
                             </DialogDescription>
                         </DialogHeader>
                         <form
@@ -186,7 +187,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                             className="space-y-4"
                         >
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">{t('modal.email_label')}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -209,21 +210,21 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                                 className="w-full"
                                 disabled={isLoading}
                             >
-                                {isLoading ? 'Отправляю...' : 'Отправить код'}
+                                {isLoading ? t('modal.sending') : t('modal.send_code')}
                             </Button>
                         </form>
                     </>
                 ) : (
                     <>
                         <DialogHeader>
-                            <DialogTitle>Проверка</DialogTitle>
+                            <DialogTitle>{t('modal.code_step_title')}</DialogTitle>
                             <DialogDescription>
-                                Мы отправили код на {email}
+                                {t('modal.code_step_description', { email })}
                             </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleCodeSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="code">Код подтверждения</Label>
+                                <Label htmlFor="code">{t('modal.code_label')}</Label>
                                 <Input
                                     id="code"
                                     type="text"
@@ -251,8 +252,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                                     className="mt-2 h-8 text-xs text-muted-foreground hover:text-primary"
                                 >
                                     {resendCooldown > 0
-                                        ? `Повторить отправку кода (${resendCooldown}s)`
-                                        : 'Повторить отправку кода'}
+                                        ? t('modal.resend_code_timer', { seconds: resendCooldown })
+                                        : t('modal.resend_code')}
                                 </Button>
                             </div>
                             <div className="flex gap-2">
@@ -263,14 +264,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                                     onClick={() => setStep('email')}
                                     disabled={isLoading}
                                 >
-                                    Назад
+                                    {t('modal.back')}
                                 </Button>
                                 <Button
                                     type="submit"
                                     className="flex-1"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? 'Проверяю...' : 'Войти'}
+                                    {isLoading ? t('modal.verifying') : t('modal.verify')}
                                 </Button>
                             </div>
                         </form>

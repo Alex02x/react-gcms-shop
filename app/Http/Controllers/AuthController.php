@@ -32,7 +32,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Too many attempts. Please try again later.',
+                'message' => __('auth.too_many_attempts'),
                 'retry_after' => $seconds,
             ], 429);
         }
@@ -46,7 +46,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send verification code. Please try again later.',
+                'message' => __('auth.failed_to_send_code'),
             ], 500);
         }
     }
@@ -71,7 +71,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Too many attempts. Please try again later.',
+                'message' => __('auth.too_many_attempts'),
                 'retry_after' => $seconds,
             ], 429);
         }
@@ -88,13 +88,13 @@ class AuthController extends Controller
             if (RateLimiter::tooManyAttempts($failedKey, 5)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Too many failed attempts. Please request a new code.',
+                    'message' => __('auth.too_many_failed_attempts'),
                 ], 401);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid or expired code. Please request a new one.',
+                'message' => __('auth.invalid_code'),
             ], 401);
         }
 
@@ -125,7 +125,7 @@ class AuthController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'Unauthenticated',
+                'message' => __('auth.unauthenticated'),
             ], 401);
         }
 
@@ -150,7 +150,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully',
+            'message' => __('auth.logout_success'),
         ]);
     }
 }

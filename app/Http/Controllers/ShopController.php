@@ -174,6 +174,7 @@ class ShopController extends Controller
                 'has_discount' => $product->hasDiscount(),
                 'is_purchased' => $isPurchased,
                 'prevent_repurchase' => $product->prevent_repurchase,
+                'require_telegram_subscription' => $product->require_telegram_subscription ?? false,
                 'images' => $images,
                 'category' => [
                     'name' => $product->subcategory->mainCategory->name,

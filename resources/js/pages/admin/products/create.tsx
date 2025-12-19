@@ -1,7 +1,10 @@
 import AdminLayout from '@/layouts/admin-layout';
+import { MarkdownEditor } from '@/components/markdown-editor';
+import { AlertModal } from '@/components/alert-modal';
 import { Link, useForm } from '@inertiajs/react';
 import { AlertCircle, Upload, X } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Subcategory {
     id: number;
@@ -17,6 +20,7 @@ interface PageProps {
 }
 
 export default function Create({ subcategories }: PageProps) {
+    const { t } = useTranslation('products');
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         slug: '',
@@ -29,9 +33,12 @@ export default function Create({ subcategories }: PageProps) {
         demo_url: '',
         images: [] as File[],
         prevent_repurchase: false,
+        require_telegram_subscription: false,
     });
 
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+    const [maxImagesErrorOpen, setMaxImagesErrorOpen] = useState(false);
+    const [availableSlots, setAvailableSlots] = useState(0);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
@@ -39,9 +46,8 @@ export default function Create({ subcategories }: PageProps) {
         const availableSlots = 20 - currentImages;
 
         if (files.length > availableSlots) {
-            alert(
-                `You can only upload ${availableSlots} more images. Maximum is 20 images.`,
-            );
+            setAvailableSlots(availableSlots);
+            setMaxImagesErrorOpen(true);
             return;
         }
 
@@ -261,31 +267,17 @@ export default function Create({ subcategories }: PageProps) {
                             </div>
 
                             {/* Long Description */}
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Long Description (Markdown)
-                                    <span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.long_description}
-                                    onChange={(e) =>
-                                        setData(
-                                            'long_description',
-                                            e.target.value,
-                                        )
-                                    }
-                                    placeholder="Detailed product description in Markdown format"
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={8}
-                                    required
-                                />
-                                {errors.long_description && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.long_description}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.long_description}
+                                onChange={(value) =>
+                                    setData('long_description', value)
+                                }
+                                label="Long Description (Markdown)"
+                                required
+                                error={errors.long_description}
+                                placeholder="# Product Description\n\n## Features\n- Feature 1\n- Feature 2\n\n## Installation\n...\n\n## Usage\n..."
+                                height={400}
+                            />
                         </div>
                     </div>
 
@@ -374,6 +366,31 @@ export default function Create({ subcategories }: PageProps) {
                                 </span>
                             </label>
                         </div>
+
+                        {/* Require Telegram Subscription Checkbox - Only for free products */}
+                        {parseFloat(data.current_price || '0') === 0 && (
+                            <div className="mt-4">
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={data.require_telegram_subscription}
+                                        onChange={(e) =>
+                                            setData(
+                                                'require_telegram_subscription',
+                                                e.target.checked,
+                                            )
+                                        }
+                                        className="h-4 w-4 rounded border-gray-300"
+                                    />
+                                    <span className="text-sm font-medium">
+                                        Require Telegram Channel Subscription
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                        (Users must be subscribed to your Telegram channel to download this free product)
+                                    </span>
+                                </label>
+                            </div>
+                        )}
                     </div>
 
                     {/* Demo URL */}
@@ -423,7 +440,7 @@ export default function Create({ subcategories }: PageProps) {
                                         Click to upload images
                                     </span>
                                     <span className="mt-1 text-xs text-muted-foreground">
-                                        JPG, PNG, GIF (max 10MB each)
+                                        JPG, PNG, GIF (max 100MB each)
                                     </span>
                                     <span className="mt-1 text-xs text-muted-foreground">
                                         {data.images.length}/20 images uploaded
@@ -493,6 +510,15 @@ export default function Create({ subcategories }: PageProps) {
                     </div>
                 </form>
             </div>
+
+            <AlertModal
+                open={maxImagesErrorOpen}
+                onOpenChange={setMaxImagesErrorOpen}
+                title="Слишком много изображений"
+                description={`Вы можете загрузить еще только ${availableSlots} изображений. Максимум 20 изображений.`}
+                type="error"
+                buttonText="OK"
+            />
         </AdminLayout>
     );
 }

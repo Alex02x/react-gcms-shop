@@ -1,0 +1,120 @@
+{
+  "header": {
+    "site_name": "GameCMS.su",
+    "login_button": "Войти",
+    "admin_panel": "Админ панель",
+    "my_purchases": "Мои покупки",
+    "logout": "Выйти"
+  },
+  "navigation": {
+    "home": "Главная",
+    "products": "Продукты",
+    "categories": "Категории",
+    "search": "Поиск",
+    "profile": "Профиль",
+    "settings": "Настройки"
+  },
+  "buttons": {
+    "submit": "Отправить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "back": "Назад",
+    "next": "Далее",
+    "save": "Сохранить",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "close": "Закрыть",
+    "send": "Отправить",
+    "resend": "Повторить отправку",
+    "download": "Скачать"
+  },
+  "messages": {
+    "loading": "Загрузка...",
+    "processing": "Обработка...",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "no_results": "Результаты не найдены"
+  },
+  "filters": {
+    "all_categories": "Все категории",
+    "filter_by": "Фильтр",
+    "sort_by": "Сортировка",
+    "reset_filters": "Сбросить фильтры"
+  },
+  "pagination": {
+    "previous": "Предыдущая",
+    "next": "Следующая",
+    "page": "Страница",
+    "of": "из",
+    "showing": "Показано",
+    "to": "до",
+    "results": "результатов"
+  },
+  "categories": {
+    "search_placeholder": "Поиск товаров...",
+    "title": "Категории",
+    "no_categories": "Категории не найдены"
+  },
+  "user_menu": {
+    "title": "Личный кабинет",
+    "my_purchases": "Мои покупки",
+    "my_wallet": "Мой кошелек",
+    "profile_settings": "Настройки профиля"
+  },
+  "buys": {
+    "page_title": "Мои покупки",
+    "page_description": "Все ваши приобретенные товары",
+    "error_loading": "Не удалось загрузить ваши покупки. Попробуйте еще раз.",
+    "no_purchases": "У вас пока нет покупок",
+    "loading": "Загрузка..."
+  },
+  "shop": {
+    "catalog_title": "Каталог товаров",
+    "catalog_description": "Найдите идеальное решение для вашего проекта",
+    "loading": "Загрузка...",
+    "products_found": "Найдено товаров: {{count}}",
+    "no_products": "Товары не найдены"
+  },
+  "settings": {
+    "page_title": "Настройки профиля",
+    "page_description": "Управление вашим аккаунтом и предпочтениями",
+    "profile_info_title": "Информация профиля",
+    "email_label": "Email",
+    "email_description": "Ваш email используется для входа и получения уведомлений",
+    "security_title": "Безопасность",
+    "change_password": "Изменить пароль",
+    "change_password_description": "Обновите пароль для вашей учетной записи",
+    "change_button": "Изменить",
+    "two_factor_auth": "Двухфакторная аутентификация",
+    "two_factor_description": "Дополнительная защита вашего аккаунта",
+    "enable_button": "Включить",
+    "notifications_title": "Уведомления",
+    "email_notifications": "Email уведомления",
+    "email_notifications_description": "Получать уведомления о новых товарах и акциях",
+    "saving": "Сохранение...",
+    "save_changes": "Сохранить изменения"
+  },
+  "wallet": {
+    "page_title": "Мой кошелек",
+    "page_description": "Пополните баланс и управляйте финансами",
+    "current_balance": "Текущий баланс",
+    "top_up_amount": "Сумма пополнения",
+    "amount_placeholder": "Минимум 100 ₽",
+    "minimum_amount_error": "Минимальная сумма пополнения 100 ₽",
+    "payment_method": "Способ оплаты",
+    "enter_amount_first": "(введите сумму)",
+    "processing": "Обработка...",
+    "top_up_button": "Пополнить баланс",
+    "payment_history": "История пополнений",
+    "no_payments": "История пополнений пуста",
+    "status_completed": "Выполнено",
+    "status_pending": "В обработке",
+    "status_failed": "Отклонено",
+    "method_sbp_name": "СБП",
+    "method_sbp_description": "Быстрое пополнение",
+    "method_yookassa_name": "ЮКасса",
+    "method_yookassa_description": "Российские карты",
+    "method_card": "Банковская карта",
+    "method_yoomoney": "ЮMoney"
+  }
+}

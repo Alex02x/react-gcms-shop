@@ -1,6 +1,9 @@
 import AdminLayout from '@/layouts/admin-layout';
-import { Link } from '@inertiajs/react';
-import { Edit, Package, Plus } from 'lucide-react';
+import { ConfirmationModal } from '@/components/confirmation-modal';
+import { Link, router } from '@inertiajs/react';
+import { Edit, Package, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Subcategory {
     id: number;
@@ -38,6 +41,10 @@ interface PageProps {
 }
 
 export default function Index({ products, subcategories, filters }: PageProps) {
+    const { t } = useTranslation('products');
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<{ id: number; name: string } | null>(null);
+
     const formatPrice = (price: number | string) => {
         const numPrice = typeof price === 'string' ? parseFloat(price) : price;
         return `₽${numPrice.toFixed(2)}`;
@@ -49,6 +56,17 @@ export default function Index({ products, subcategories, filters }: PageProps) {
             month: 'short',
             day: 'numeric',
         });
+    };
+
+    const handleDelete = (productId: number, productName: string) => {
+        setProductToDelete({ id: productId, name: productName });
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (!productToDelete) return;
+        router.delete(`/admin/products/${productToDelete.id}`);
+        setProductToDelete(null);
     };
 
     return (
@@ -189,6 +207,18 @@ export default function Index({ products, subcategories, filters }: PageProps) {
                                                     <Edit className="h-4 w-4" />
                                                     Edit
                                                 </Link>
+                                                <button
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            product.id,
+                                                            product.name,
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center gap-1 rounded-md border border-destructive px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                    Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -226,6 +256,17 @@ export default function Index({ products, subcategories, filters }: PageProps) {
                     </div>
                 )}
             </div>
+
+            <ConfirmationModal
+                open={deleteConfirmOpen}
+                onOpenChange={setDeleteConfirmOpen}
+                onConfirm={confirmDelete}
+                title="Удалить продукт"
+                description={`Вы уверены, что хотите удалить "${productToDelete?.name}"? Это действие нельзя отменить, и все связанные данные будут безвозвратно удалены.`}
+                confirmText="Удалить"
+                cancelText="Отмена"
+                variant="destructive"
+            />
         </AdminLayout>
     );
 }

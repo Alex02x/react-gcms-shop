@@ -210,7 +210,7 @@ export default function WalletPage() {
 
         {/* Payment History */}
         <div className="rounded-2xl border bg-card/50 backdrop-blur-sm p-6">
-          <h2 className="text-xl font-bold mb-4">История пополнений</h2>
+          <h2 className="text-xl font-bold mb-4">История операций</h2>
 
           {isLoading ? (
             <div className="space-y-4">
@@ -220,7 +220,7 @@ export default function WalletPage() {
             </div>
           ) : payments.length === 0 ? (
             <div className="rounded-2xl border bg-card/50 backdrop-blur-sm p-12 text-center">
-              <p className="text-muted-foreground">История пополнений пуста</p>
+              <p className="text-muted-foreground">История операций пуста</p>
             </div>
           ) : (
             <div className="space-y-4">

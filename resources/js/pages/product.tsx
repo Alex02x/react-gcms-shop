@@ -20,6 +20,7 @@ interface Product {
     has_discount: boolean;
     is_purchased: boolean;
     prevent_repurchase: boolean;
+    require_telegram_subscription: boolean;
     images: Array<{
         id: number;
         url: string;

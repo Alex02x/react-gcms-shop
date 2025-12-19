@@ -1,7 +1,11 @@
 import AdminLayout from '@/layouts/admin-layout';
+import { MarkdownEditor } from '@/components/markdown-editor';
+import { ConfirmationModal } from '@/components/confirmation-modal';
+import { AlertModal } from '@/components/alert-modal';
 import { Link, router, useForm } from '@inertiajs/react';
 import { AlertCircle, Trash2, Upload, X } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Subcategory {
     id: number;
@@ -33,6 +37,7 @@ interface Product {
     media: Media[];
     subcategory: Subcategory;
     prevent_repurchase: boolean;
+    require_telegram_subscription: boolean;
 }
 
 interface PageProps {
@@ -41,6 +46,7 @@ interface PageProps {
 }
 
 export default function Edit({ product, subcategories }: PageProps) {
+    const { t } = useTranslation('products');
     const { data, setData, put, processing, errors } = useForm({
         name: product.name,
         slug: product.slug,
@@ -52,18 +58,24 @@ export default function Edit({ product, subcategories }: PageProps) {
         author: product.author,
         demo_url: product.demo_url || '',
         prevent_repurchase: product.prevent_repurchase || false,
+        require_telegram_subscription: product.require_telegram_subscription || false,
     });
 
     const [newImages, setNewImages] = useState<File[]>([]);
     const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+    const [deleteImageConfirmOpen, setDeleteImageConfirmOpen] = useState(false);
+    const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+    const [maxImagesErrorOpen, setMaxImagesErrorOpen] = useState(false);
+    const [availableSlots, setAvailableSlots] = useState(0);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || []);
         const totalImages = product.media.length + newImages.length;
-        const availableSlots = 20 - totalImages;
+        const slots = 20 - totalImages;
 
-        if (files.length > availableSlots) {
-            alert(`You can only upload ${availableSlots} more images. Maximum is 20 images.`);
+        if (files.length > slots) {
+            setAvailableSlots(slots);
+            setMaxImagesErrorOpen(true);
             return;
         }
 
@@ -84,11 +96,16 @@ export default function Edit({ product, subcategories }: PageProps) {
     };
 
     const deleteExistingImage = (mediaId: number) => {
-        if (confirm('Are you sure you want to delete this image?')) {
-            router.delete(`/admin/products/${product.id}/images/${mediaId}`, {
-                preserveScroll: true,
-            });
-        }
+        setImageToDelete(mediaId);
+        setDeleteImageConfirmOpen(true);
+    };
+
+    const confirmDeleteImage = () => {
+        if (!imageToDelete) return;
+        router.delete(`/admin/products/${product.id}/images/${imageToDelete}`, {
+            preserveScroll: true,
+        });
+        setImageToDelete(null);
     };
 
     const uploadNewImages = () => {
@@ -264,24 +281,17 @@ export default function Edit({ product, subcategories }: PageProps) {
                                 )}
                             </div>
 
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Long Description (Markdown)<span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.long_description}
-                                    onChange={(e) => setData('long_description', e.target.value)}
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={8}
-                                    required
-                                />
-                                {errors.long_description && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.long_description}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.long_description}
+                                onChange={(value) =>
+                                    setData('long_description', value)
+                                }
+                                label="Long Description (Markdown)"
+                                required
+                                error={errors.long_description}
+                                placeholder="# Product Description\n\n## Features\n- Feature 1\n- Feature 2"
+                                height={400}
+                            />
                         </div>
                     </div>
 
@@ -354,6 +364,31 @@ export default function Edit({ product, subcategories }: PageProps) {
                                 </span>
                             </label>
                         </div>
+
+                        {/* Require Telegram Subscription Checkbox - Only for free products */}
+                        {parseFloat(data.current_price) === 0 && (
+                            <div className="mt-4">
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={data.require_telegram_subscription}
+                                        onChange={(e) =>
+                                            setData(
+                                                'require_telegram_subscription',
+                                                e.target.checked,
+                                            )
+                                        }
+                                        className="h-4 w-4 rounded border-gray-300"
+                                    />
+                                    <span className="text-sm font-medium">
+                                        Require Telegram Channel Subscription
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                        (Users must be subscribed to your Telegram channel to download this free product)
+                                    </span>
+                                </label>
+                            </div>
+                        )}
                     </div>
 
                     <div className="rounded-lg border bg-card p-6">
@@ -455,7 +490,7 @@ export default function Edit({ product, subcategories }: PageProps) {
                             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/10 px-6 py-8 transition-colors hover:border-muted-foreground/50 hover:bg-muted/20">
                                 <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
                                 <span className="text-sm font-medium">Click to add more images</span>
-                                <span className="mt-1 text-xs text-muted-foreground">JPG, PNG, GIF (max 10MB each)</span>
+                                <span className="mt-1 text-xs text-muted-foreground">JPG, PNG, GIF (max 100MB each)</span>
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/gif"
@@ -484,6 +519,26 @@ export default function Edit({ product, subcategories }: PageProps) {
                     </div>
                 </form>
             </div>
+
+            <ConfirmationModal
+                open={deleteImageConfirmOpen}
+                onOpenChange={setDeleteImageConfirmOpen}
+                onConfirm={confirmDeleteImage}
+                title="Удалить изображение"
+                description="Вы уверены, что хотите удалить это изображение? Это действие нельзя отменить."
+                confirmText="Удалить"
+                cancelText="Отмена"
+                variant="destructive"
+            />
+
+            <AlertModal
+                open={maxImagesErrorOpen}
+                onOpenChange={setMaxImagesErrorOpen}
+                title="Слишком много изображений"
+                description={`Вы можете загрузить еще только ${availableSlots} изображений. Максимум 20 изображений.`}
+                type="error"
+                buttonText="OK"
+            />
         </AdminLayout>
     );
 }

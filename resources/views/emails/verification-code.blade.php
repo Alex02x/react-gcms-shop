@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,28 +81,28 @@
             <div class="logo">GameCMS.su</div>
         </div>
         <div class="content">
-            <div class="greeting">Hello!</div>
+            <div class="greeting">{{ __('auth.email.greeting') }}</div>
             <div class="message">
-                You have requested to sign in to your GameCMS.su account.
+                {{ __('auth.email.sign_in_request') }}
                 <br><br>
-                Your verification code is:
+                {{ __('auth.email.verification_code') }}
             </div>
             <div class="code-container">
                 <div class="code">{{ $code }}</div>
             </div>
             <div class="expiration">
-                This code will expire in <strong>10 minutes</strong>.
+                {!! __('auth.email.expiration', ['minutes' => 10]) !!}
             </div>
             <div class="help-text">
-                If you didn't request this code, you can safely ignore this email.
+                {{ __('auth.email.ignore_message') }}
                 <br><br>
-                For security reasons, this code will expire in 10 minutes and can only be used once.
+                {{ __('auth.email.security_notice', ['minutes' => 10]) }}
                 <br><br>
-                This is an automated message from GameCMS.su - please do not reply to this email.
+                {{ __('auth.email.automated_message') }}
             </div>
         </div>
         <div class="footer">
-            &copy; {{ date('Y') }} GameCMS.su. All rights reserved.
+            {!! __('auth.email.copyright', ['year' => date('Y')]) !!}
         </div>
     </div>
 </body>

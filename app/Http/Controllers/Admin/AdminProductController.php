@@ -84,9 +84,15 @@ class AdminProductController extends Controller
             'author' => 'required|string|max:255',
             'demo_url' => 'nullable|url|max:2048',
             'images' => 'nullable|array|max:20',
-            'images.*' => 'image|max:10240|mimes:jpeg,jpg,png,gif',
+            'images.*' => 'image|max:102400|mimes:jpeg,jpg,png,gif', // 100MB
             'prevent_repurchase' => 'nullable|boolean',
+            'require_telegram_subscription' => 'nullable|boolean',
         ]);
+
+        // If current_price is not 0, force require_telegram_subscription to false
+        if ($validated['current_price'] > 0) {
+            $validated['require_telegram_subscription'] = false;
+        }
 
         $product = Product::create($validated);
 
@@ -142,7 +148,13 @@ class AdminProductController extends Controller
             'author' => 'required|string|max:255',
             'demo_url' => 'nullable|url|max:2048',
             'prevent_repurchase' => 'nullable|boolean',
+            'require_telegram_subscription' => 'nullable|boolean',
         ]);
+
+        // If current_price is not 0, force require_telegram_subscription to false
+        if ($validated['current_price'] > 0) {
+            $validated['require_telegram_subscription'] = false;
+        }
 
         $product->update($validated);
 
@@ -163,7 +175,7 @@ class AdminProductController extends Controller
 
         $request->validate([
             'images' => "required|array|max:{$maxAllowed}",
-            'images.*' => 'image|max:10240|mimes:jpeg,jpg,png,gif',
+            'images.*' => 'image|max:102400|mimes:jpeg,jpg,png,gif', // 100MB
         ]);
 
         foreach ($request->file('images') as $index => $image) {

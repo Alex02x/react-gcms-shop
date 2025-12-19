@@ -35,6 +35,9 @@ class User extends Authenticatable implements Customer
         'email',
         'password',
         'avatar',
+        'telegram_user_id',
+        'telegram_username',
+        'telegram_linked_at',
     ];
 
     /**
@@ -60,6 +63,7 @@ class User extends Authenticatable implements Customer
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'telegram_linked_at' => 'datetime',
         ];
     }
 
@@ -125,5 +129,13 @@ class User extends Authenticatable implements Customer
             ->first();
 
         return $purchase?->pivot->purchase_price;
+    }
+
+    /**
+     * Check if user has linked Telegram account.
+     */
+    public function hasTelegramLinked(): bool
+    {
+        return !is_null($this->telegram_user_id);
     }
 }

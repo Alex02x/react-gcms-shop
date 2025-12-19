@@ -56,6 +56,16 @@ export function ProductDescription({ content }: ProductDescriptionProps) {
                                 {children}
                             </strong>
                         ),
+                        a: ({ children, href }) => (
+                            <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary font-medium underline decoration-primary/30 underline-offset-2 transition-colors hover:text-primary/80 hover:decoration-primary"
+                            >
+                                {children}
+                            </a>
+                        ),
                     }}
                 >
                     {content}

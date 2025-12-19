@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, Download, Package, Star, User } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Calendar, Download, Package, Star, User, ExternalLink } from 'lucide-react';
 import { ProductVersionHistory } from '@/components/product-version-history';
 import { usePage, router } from '@inertiajs/react';
 import { PageProps } from '@/types/auth';
@@ -55,6 +56,10 @@ export function ProductSidebar({
     const [authModalOpen, setAuthModalOpen] = useState(false);
     const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
     const [insufficientBalanceModalOpen, setInsufficientBalanceModalOpen] = useState(false);
+    const [telegramLinkModalOpen, setTelegramLinkModalOpen] = useState(false);
+    const [telegramSubscribeModalOpen, setTelegramSubscribeModalOpen] = useState(false);
+    const [telegramChannelLink, setTelegramChannelLink] = useState<string>('');
+    const [isVerifyingSubscription, setIsVerifyingSubscription] = useState(false);
     const [isPurchasing, setIsPurchasing] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [purchaseError, setPurchaseError] = useState<string>();
@@ -80,7 +85,25 @@ export function ProductSidebar({
             );
 
             const data = response.data;
-            setPurchaseData(data);
+
+            // Check for Telegram requirements
+            if (data.requires_telegram) {
+                if (data.telegram_status === 'not_linked') {
+                    // User needs to link Telegram account
+                    setTelegramLinkModalOpen(true);
+                } else if (data.telegram_status === 'not_subscribed') {
+                    // User needs to subscribe to channel
+                    setTelegramChannelLink(data.channel_link);
+                    setTelegramSubscribeModalOpen(true);
+                }
+                setIsPurchasing(false);
+                return;
+            }
+
+            // Set purchase data only if we have valid product data
+            if (data.product) {
+                setPurchaseData(data);
+            }
 
             if (data.can_purchase) {
                 setConfirmationModalOpen(true);
@@ -136,6 +159,27 @@ export function ProductSidebar({
         }
     };
 
+    const handleVerifySubscription = async () => {
+        setIsVerifyingSubscription(true);
+        try {
+            const response = await axios.post('/telegram/verify-subscription');
+            if (response.data.subscribed) {
+                // Close subscription modal and try purchase again
+                setTelegramSubscribeModalOpen(false);
+                handleBuyNow();
+            } else {
+                setPurchaseError('You are not subscribed to the Telegram channel yet.');
+            }
+        } catch (error: any) {
+            setPurchaseError(
+                error.response?.data?.message ||
+                    'Failed to verify subscription. Please try again.'
+            );
+        } finally {
+            setIsVerifyingSubscription(false);
+        }
+    };
+
     return (
         <div className="sticky top-6 space-y-4">
             <AuthModal
@@ -172,10 +216,105 @@ export function ProductSidebar({
                 </>
             )}
 
+            {/* Telegram Link Required Modal */}
+            <Dialog open={telegramLinkModalOpen} onOpenChange={setTelegramLinkModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Telegram Account Required</DialogTitle>
+                        <DialogDescription>
+                            This free product requires a linked Telegram account and channel subscription.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                            To download this product, you need to:
+                        </p>
+                        <ol className="list-decimal list-inside space-y-2 text-sm">
+                            <li>Link your Telegram account</li>
+                            <li>Subscribe to our Telegram channel</li>
+                        </ol>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setTelegramLinkModalOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setTelegramLinkModalOpen(false);
+                                router.visit('/settings');
+                            }}
+                        >
+                            Go to Settings
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Telegram Subscribe Required Modal */}
+            <Dialog open={telegramSubscribeModalOpen} onOpenChange={setTelegramSubscribeModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Channel Subscription Required</DialogTitle>
+                        <DialogDescription>
+                            Please subscribe to our Telegram channel to download this product.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="rounded-lg border bg-muted/50 p-4">
+                            <p className="mb-3 text-sm font-medium">Step 1: Subscribe to the channel</p>
+                            <a
+                                href={telegramChannelLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-sm text-primary hover:underline"
+                            >
+                                <ExternalLink className="h-4 w-4" />
+                                Open Telegram Channel
+                            </a>
+                        </div>
+                        <div className="rounded-lg border bg-muted/50 p-4">
+                            <p className="mb-2 text-sm font-medium">Step 2: Verify your subscription</p>
+                            <p className="text-xs text-muted-foreground">
+                                After subscribing, click the button below to verify.
+                            </p>
+                        </div>
+                        {purchaseError && (
+                            <p className="text-sm text-destructive">{purchaseError}</p>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setTelegramSubscribeModalOpen(false);
+                                setPurchaseError(undefined);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleVerifySubscription}
+                            disabled={isVerifyingSubscription}
+                        >
+                            {isVerifyingSubscription ? 'Verifying...' : 'Verify Subscription'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <div className="rounded-2xl bg-card/50 p-5 ring-1 ring-foreground/10 backdrop-blur-sm">
                 <div className="mb-4">
                     <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold">{price} ₽</span>
+                        {price > 0 ? (
+                            <span className="text-3xl font-bold">{price} ₽</span>
+                        ) : (
+                            <span className="inline-block animate-gradient bg-gradient-to-r from-primary via-emerald-400 to-primary bg-[length:200%_auto] bg-clip-text text-3xl font-bold text-transparent">
+                                Бесплатно ✨
+                            </span>
+                        )}
                         {originalPrice && (
                             <>
                                 <span className="text-sm text-muted-foreground line-through">
@@ -206,7 +345,7 @@ export function ProductSidebar({
                                 disabled={isPurchasing}
                                 className="w-full cursor-pointer border border-primary/40 bg-primary/5 text-foreground transition-all hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_16px_rgba(16,185,129,0.3)]"
                             >
-                                {isPurchasing ? 'Загрузка...' : 'Купить сейчас'}
+                                {isPurchasing ? 'Загрузка...' : price > 0 ? 'Купить сейчас' : 'Скачать бесплатно'}
                             </Button>
                             {isPurchased && (
                                 <p className="text-center text-sm text-muted-foreground">

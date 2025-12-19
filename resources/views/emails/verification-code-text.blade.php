@@ -1,18 +1,18 @@
-Hello!
+{{ __('auth.email.greeting') }}
 
-You have requested to sign in to your GameCMS.su account.
+{{ __('auth.email.sign_in_request') }}
 
-Your GameCMS.su verification code is:
+{{ __('auth.email.verification_code') }}
 
 {{ $code }}
 
-This code will expire in 10 minutes and can only be used once.
+{{ __('auth.email.security_notice', ['minutes' => 10]) }}
 
-If you didn't request this code, you can safely ignore this email.
+{{ __('auth.email.ignore_message') }}
 
 For security reasons, please do not share this code with anyone.
 
-This is an automated message from GameCMS.su - please do not reply to this email.
+{{ __('auth.email.automated_message') }}
 
 ---
-© {{ date('Y') }} GameCMS.su. All rights reserved.
+{{ strip_tags(__('auth.email.copyright', ['year' => date('Y')])) }}

@@ -4,6 +4,7 @@ export interface User {
     name: string | null;
     avatar: string;
     email_verified_at: string | null;
+    balance?: number;
     permissions?: string[];
     roles?: string[];
 }

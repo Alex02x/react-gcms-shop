@@ -1,0 +1,120 @@
+{
+  "header": {
+    "site_name": "GameCMS.su",
+    "login_button": "Log In",
+    "admin_panel": "Admin Panel",
+    "my_purchases": "My Purchases",
+    "logout": "Log Out"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "search": "Search",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "buttons": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "send": "Send",
+    "resend": "Resend",
+    "download": "Download"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "success": "Success",
+    "error": "Error",
+    "no_results": "No results found"
+  },
+  "filters": {
+    "all_categories": "All Categories",
+    "filter_by": "Filter by",
+    "sort_by": "Sort by",
+    "reset_filters": "Reset Filters"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "results": "results"
+  },
+  "categories": {
+    "search_placeholder": "Search products...",
+    "title": "Categories",
+    "no_categories": "No categories found"
+  },
+  "user_menu": {
+    "title": "Personal Account",
+    "my_purchases": "My Purchases",
+    "my_wallet": "My Wallet",
+    "profile_settings": "Profile Settings"
+  },
+  "buys": {
+    "page_title": "My Purchases",
+    "page_description": "All your purchased products",
+    "error_loading": "Failed to load your purchases. Please try again.",
+    "no_purchases": "You don't have any purchases yet",
+    "loading": "Loading..."
+  },
+  "shop": {
+    "catalog_title": "Product Catalog",
+    "catalog_description": "Find the perfect solution for your project",
+    "loading": "Loading...",
+    "products_found": "Products found: {{count}}",
+    "no_products": "No products found"
+  },
+  "settings": {
+    "page_title": "Profile Settings",
+    "page_description": "Manage your account and preferences",
+    "profile_info_title": "Profile Information",
+    "email_label": "Email",
+    "email_description": "Your email is used for login and notifications",
+    "security_title": "Security",
+    "change_password": "Change Password",
+    "change_password_description": "Update your account password",
+    "change_button": "Change",
+    "two_factor_auth": "Two-Factor Authentication",
+    "two_factor_description": "Additional protection for your account",
+    "enable_button": "Enable",
+    "notifications_title": "Notifications",
+    "email_notifications": "Email Notifications",
+    "email_notifications_description": "Receive notifications about new products and promotions",
+    "saving": "Saving...",
+    "save_changes": "Save Changes"
+  },
+  "wallet": {
+    "page_title": "My Wallet",
+    "page_description": "Top up your balance and manage finances",
+    "current_balance": "Current Balance",
+    "top_up_amount": "Top-up Amount",
+    "amount_placeholder": "Minimum 100 ₽",
+    "minimum_amount_error": "Minimum top-up amount is 100 ₽",
+    "payment_method": "Payment Method",
+    "enter_amount_first": "(enter amount)",
+    "processing": "Processing...",
+    "top_up_button": "Top Up Balance",
+    "payment_history": "Payment History",
+    "no_payments": "Payment history is empty",
+    "status_completed": "Completed",
+    "status_pending": "Processing",
+    "status_failed": "Declined",
+    "method_sbp_name": "SBP",
+    "method_sbp_description": "Fast top-up",
+    "method_yookassa_name": "YooKassa",
+    "method_yookassa_description": "Russian cards",
+    "method_card": "Bank Card",
+    "method_yoomoney": "YooMoney"
+  }
+}

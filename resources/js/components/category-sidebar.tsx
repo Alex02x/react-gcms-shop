@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronDown, ChevronRight, Loader2, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Category {
     id: number;
@@ -38,6 +39,7 @@ export function CategorySidebar({
     selectedCategory,
     selectedSubcategory,
 }: CategorySidebarProps) {
+    const { t } = useTranslation('common');
     const [expandedCategories, setExpandedCategories] = useState<string[]>(
         categories.length > 0 ? [categories[0].slug] : [],
     );
@@ -95,7 +97,7 @@ export function CategorySidebar({
             <div className="relative mb-6">
                 <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                    placeholder="Поиск товаров..."
+                    placeholder={t('categories.search_placeholder')}
                     className="pr-9 pl-9"
                     value={searchQuery}
                     onChange={handleSearchChange}
@@ -106,11 +108,11 @@ export function CategorySidebar({
             </div>
 
             <div className="space-y-1">
-                <h3 className="mb-3 text-sm font-semibold">Категории</h3>
+                <h3 className="mb-3 text-sm font-semibold">{t('categories.title')}</h3>
 
                 {categories.length === 0 ? (
                     <div className="py-6 text-center text-sm text-muted-foreground">
-                        Категории не найдены
+                        {t('categories.no_categories')}
                     </div>
                 ) : (
                     categories.map((category) => {

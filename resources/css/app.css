@@ -135,4 +135,156 @@
             BlinkMacSystemFont,
             sans-serif;
     }
+
+    /* Gradient animation for FREE text */
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .animate-gradient {
+        animation: gradient 3s ease infinite;
+    }
+}
+
+/* Markdown Editor Styles */
+@layer components {
+    /* Editor container */
+    .markdown-editor-wrapper {
+        @apply rounded-md overflow-hidden;
+    }
+
+    /* Override default editor styles */
+    .markdown-editor-wrapper .w-md-editor {
+        background-color: hsl(var(--background)) !important;
+        color: hsl(var(--foreground)) !important;
+        border: 1px solid hsl(var(--border)) !important;
+    }
+
+    .markdown-editor-wrapper .w-md-editor-toolbar {
+        background-color: hsl(var(--muted)) !important;
+        border-bottom: 1px solid hsl(var(--border)) !important;
+    }
+
+    .markdown-editor-wrapper .w-md-editor-toolbar button {
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .markdown-editor-wrapper .w-md-editor-toolbar button:hover {
+        background-color: hsl(var(--accent)) !important;
+        color: hsl(var(--accent-foreground)) !important;
+    }
+
+    .markdown-editor-wrapper .w-md-editor-text,
+    .markdown-editor-wrapper .w-md-editor-text-pre,
+    .markdown-editor-wrapper .w-md-editor-text-input {
+        background-color: hsl(var(--background)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .markdown-editor-wrapper .w-md-editor-preview {
+        background-color: hsl(var(--card)) !important;
+        color: hsl(var(--card-foreground)) !important;
+    }
+
+    /* Preview content styling */
+    .markdown-preview-content {
+        @apply text-foreground;
+    }
+
+    .markdown-preview-content h1 {
+        @apply text-2xl font-bold mb-4 mt-6;
+    }
+
+    .markdown-preview-content h2 {
+        @apply text-xl font-bold mb-3 mt-5;
+    }
+
+    .markdown-preview-content h3 {
+        @apply text-lg font-semibold mb-2 mt-4;
+    }
+
+    .markdown-preview-content p {
+        @apply mb-4 leading-relaxed;
+    }
+
+    .markdown-preview-content ul,
+    .markdown-preview-content ol {
+        @apply mb-4 ml-6;
+    }
+
+    .markdown-preview-content li {
+        @apply mb-2;
+    }
+
+    .markdown-preview-content code {
+        @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+    }
+
+    .markdown-preview-content pre {
+        @apply bg-muted p-4 rounded-md overflow-x-auto mb-4;
+    }
+
+    .markdown-preview-content pre code {
+        @apply bg-transparent p-0;
+    }
+
+    .markdown-preview-content blockquote {
+        @apply border-l-4 border-primary pl-4 italic my-4;
+    }
+
+    .markdown-preview-content a {
+        @apply text-primary hover:underline;
+    }
+
+    .markdown-preview-content hr {
+        @apply border-border my-8;
+    }
+
+    .markdown-preview-content table {
+        @apply w-full border-collapse mb-4;
+    }
+
+    .markdown-preview-content th,
+    .markdown-preview-content td {
+        @apply border border-border px-4 py-2;
+    }
+
+    .markdown-preview-content th {
+        @apply bg-muted font-semibold;
+    }
+
+    /* Lightbox Custom Styles */
+    .yarl__button {
+        filter: none !important;
+        background-color: hsl(var(--background) / 0.8) !important;
+        color: hsl(var(--foreground)) !important;
+        backdrop-filter: blur(8px) !important;
+        border-radius: 0.5rem !important;
+        transition: all 0.2s !important;
+    }
+
+    .yarl__button:hover {
+        background-color: hsl(var(--primary)) !important;
+        color: hsl(var(--primary-foreground)) !important;
+    }
+
+    .yarl__slide_image {
+        border-radius: 0.75rem !important;
+    }
+
+    .yarl__toolbar {
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.8),
+            transparent
+        ) !important;
+    }
 }

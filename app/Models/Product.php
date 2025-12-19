@@ -37,6 +37,7 @@ class Product extends Model implements HasMedia, ProductInterface
         'view_count',
         'download_count',
         'prevent_repurchase',
+        'require_telegram_subscription',
     ];
 
     /**
@@ -52,6 +53,7 @@ class Product extends Model implements HasMedia, ProductInterface
             'view_count' => 'integer',
             'download_count' => 'integer',
             'prevent_repurchase' => 'boolean',
+            'require_telegram_subscription' => 'boolean',
         ];
     }
 

@@ -2,6 +2,7 @@ import { PurchaseCard } from '@/components/purchase-card';
 import { UserSidebar } from '@/components/user-sidebar';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface Purchase {
     id: number;
@@ -21,6 +22,7 @@ interface Purchase {
 }
 
 export default function BuysPage() {
+    const { t } = useTranslation('common');
     const [purchases, setPurchases] = useState<Purchase[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export default function BuysPage() {
                 setPurchases(response.data.data);
             } catch (err: any) {
                 console.error('Failed to fetch purchases:', err);
-                setError('Failed to load your purchases. Please try again.');
+                setError(t('buys.error_loading'));
             } finally {
                 setIsLoading(false);
             }
@@ -49,9 +51,9 @@ export default function BuysPage() {
 
             <div className="flex-1 space-y-4">
                 <div className="rounded-2xl border bg-card/50 p-6 backdrop-blur-sm">
-                    <h1 className="text-2xl font-bold">Мои покупки</h1>
+                    <h1 className="text-2xl font-bold">{t('buys.page_title')}</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Все ваши приобретенные товары
+                        {t('buys.page_description')}
                     </p>
                 </div>
 
@@ -71,7 +73,7 @@ export default function BuysPage() {
                 ) : purchases.length === 0 ? (
                     <div className="rounded-2xl border bg-card/50 p-12 text-center backdrop-blur-sm">
                         <p className="text-muted-foreground">
-                            У вас пока нет покупок
+                            {t('buys.no_purchases')}
                         </p>
                     </div>
                 ) : (

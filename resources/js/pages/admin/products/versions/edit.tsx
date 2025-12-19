@@ -1,4 +1,5 @@
 import AdminLayout from '@/layouts/admin-layout';
+import { MarkdownEditor } from '@/components/markdown-editor';
 import { Link, router, useForm } from '@inertiajs/react';
 import { AlertCircle, Upload } from 'lucide-react';
 import { type FormEvent } from 'react';
@@ -160,57 +161,30 @@ export default function Edit({ product, version }: PageProps) {
                             Changelog
                         </h2>
                         <div className="space-y-4">
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Short Description (Markdown)
-                                    <span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.short_description}
-                                    onChange={(e) =>
-                                        setData(
-                                            'short_description',
-                                            e.target.value,
-                                        )
-                                    }
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={3}
-                                    maxLength={1000}
-                                    required
-                                />
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    {data.short_description.length}/1000
-                                    characters
-                                </p>
-                                {errors.short_description && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.short_description}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.short_description}
+                                onChange={(value) =>
+                                    setData('short_description', value)
+                                }
+                                label="Short Description (Markdown)"
+                                required
+                                error={errors.short_description}
+                                placeholder="Brief summary of changes"
+                                height={200}
+                                maxLength={1000}
+                            />
 
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Full Changelog (Markdown)
-                                    <span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.full_changelog}
-                                    onChange={(e) =>
-                                        setData('full_changelog', e.target.value)
-                                    }
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={10}
-                                    required
-                                />
-                                {errors.full_changelog && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.full_changelog}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.full_changelog}
+                                onChange={(value) =>
+                                    setData('full_changelog', value)
+                                }
+                                label="Full Changelog (Markdown)"
+                                required
+                                error={errors.full_changelog}
+                                placeholder="## What's Changed\n\n### Added\n- New feature X"
+                                height={400}
+                            />
                         </div>
                     </div>
 

@@ -1,4 +1,5 @@
 import AdminLayout from '@/layouts/admin-layout';
+import { MarkdownEditor } from '@/components/markdown-editor';
 import { Link, useForm } from '@inertiajs/react';
 import { AlertCircle, Upload } from 'lucide-react';
 import { type FormEvent } from 'react';
@@ -145,63 +146,31 @@ export default function Create({ product }: PageProps) {
                         </h2>
                         <div className="space-y-4">
                             {/* Short Description */}
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Short Description (Markdown)
-                                    <span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.short_description}
-                                    onChange={(e) =>
-                                        setData(
-                                            'short_description',
-                                            e.target.value,
-                                        )
-                                    }
-                                    placeholder="Brief summary of changes (max 1000 characters)"
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={3}
-                                    maxLength={1000}
-                                    required
-                                />
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    {data.short_description.length}/1000
-                                    characters
-                                </p>
-                                {errors.short_description && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.short_description}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.short_description}
+                                onChange={(value) =>
+                                    setData('short_description', value)
+                                }
+                                label="Short Description (Markdown)"
+                                required
+                                error={errors.short_description}
+                                placeholder="Brief summary of changes"
+                                height={200}
+                                maxLength={1000}
+                            />
 
                             {/* Full Changelog */}
-                            <div>
-                                <label className="mb-2 block text-sm font-medium">
-                                    Full Changelog (Markdown)
-                                    <span className="text-destructive">*</span>
-                                </label>
-                                <textarea
-                                    value={data.full_changelog}
-                                    onChange={(e) =>
-                                        setData('full_changelog', e.target.value)
-                                    }
-                                    placeholder="## What's Changed&#10;&#10;### Added&#10;- New feature X&#10;&#10;### Fixed&#10;- Bug Y"
-                                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-                                    rows={10}
-                                    required
-                                />
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    Use Markdown formatting for better readability
-                                </p>
-                                {errors.full_changelog && (
-                                    <p className="mt-1 flex items-center gap-1 text-sm text-destructive">
-                                        <AlertCircle className="h-4 w-4" />
-                                        {errors.full_changelog}
-                                    </p>
-                                )}
-                            </div>
+                            <MarkdownEditor
+                                value={data.full_changelog}
+                                onChange={(value) =>
+                                    setData('full_changelog', value)
+                                }
+                                label="Full Changelog (Markdown)"
+                                required
+                                error={errors.full_changelog}
+                                placeholder="## What's Changed\n\n### Added\n- New feature X\n\n### Fixed\n- Bug Y\n\n### Changed\n- Improvement Z"
+                                height={400}
+                            />
                         </div>
                     </div>
 

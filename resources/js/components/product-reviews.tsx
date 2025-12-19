@@ -2,10 +2,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { AuthModal } from '@/components/auth-modal';
+import { ConfirmationModal } from '@/components/confirmation-modal';
+import { AlertModal } from '@/components/alert-modal';
 import { useAuth } from '@/lib/auth-utils';
 import { Star, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface Review {
     id: number;
@@ -48,6 +51,7 @@ export function ProductReviews({
     userReview: initialUserReview,
 }: ProductReviewsProps) {
     const { user } = useAuth();
+    const { t, i18n } = useTranslation('products');
     const [reviews, setReviews] = useState<Review[]>(initialReviews);
     const [reviewsCount, setReviewsCount] = useState(initialReviewsCount);
     const [rating, setRating] = useState(averageRating);
@@ -60,6 +64,10 @@ export function ProductReviews({
     const [reviewText, setReviewText] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | undefined>();
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
+    const [deleteErrorOpen, setDeleteErrorOpen] = useState(false);
+    const [deleteErrorMessage, setDeleteErrorMessage] = useState('');
 
     const handleWriteReview = () => {
         if (!user) {
@@ -68,7 +76,7 @@ export function ProductReviews({
         }
 
         if (!isPurchased) {
-            setError('Вы должны приобрести этот продукт, чтобы оставить отзыв.');
+            setError(t('review_form.error_purchase_required'));
             return;
         }
 
@@ -91,17 +99,17 @@ export function ProductReviews({
 
     const handleSubmitReview = async () => {
         if (formRating === 0) {
-            setError('Пожалуйста, выберите оценку.');
+            setError(t('review_form.error_rating'));
             return;
         }
 
         if (reviewText.trim().length < 10) {
-            setError('Отзыв должен содержать хотя бы 10 символов.');
+            setError(t('review_form.error_min_length'));
             return;
         }
 
         if (reviewText.trim().length > 2000) {
-            setError('Отзыв не должен превышать 2000 символов.');
+            setError(t('review_form.error_max_length'));
             return;
         }
 
@@ -187,7 +195,7 @@ export function ProductReviews({
             console.error('Ошибка при отправке отзыва:', error);
             setError(
                 error.response?.data?.message ||
-                    'Ошибка при отправке отзыва. Попробуйте еще раз.'
+                    t('review_form.error_submit')
             );
         } finally {
             setIsSubmitting(false);
@@ -195,22 +203,25 @@ export function ProductReviews({
     };
 
     const handleDeleteReview = async (reviewId: number) => {
-        if (!confirm('Вы уверены, что хотите удалить этот отзыв?')) {
-            return;
-        }
+        setReviewToDelete(reviewId);
+        setDeleteConfirmOpen(true);
+    };
+
+    const confirmDeleteReview = async () => {
+        if (!reviewToDelete) return;
 
         try {
-            const response = await axios.delete(`/reviews/${reviewId}`);
+            const response = await axios.delete(`/reviews/${reviewToDelete}`);
 
             if (response.data.success) {
                 // Remove from reviews list
-                const deletedReview = reviews.find(r => r.id === reviewId);
-                const newReviews = reviews.filter(r => r.id !== reviewId);
+                const deletedReview = reviews.find(r => r.id === reviewToDelete);
+                const newReviews = reviews.filter(r => r.id !== reviewToDelete);
                 setReviews(newReviews);
                 setReviewsCount(reviewsCount - 1);
 
                 // Clear user review if it was their own
-                if (userReview && userReview.id === reviewId) {
+                if (userReview && userReview.id === reviewToDelete) {
                     setUserReview(null);
                 }
 
@@ -224,20 +235,26 @@ export function ProductReviews({
             }
         } catch (error: any) {
             console.error('Ошибка при удалении отзыва:', error);
-            alert('Ошибка при удалении отзыва. Попробуйте еще раз.');
+            setDeleteErrorMessage(
+                error.response?.data?.message ||
+                    t('review_form.error_delete')
+            );
+            setDeleteErrorOpen(true);
+        } finally {
+            setReviewToDelete(null);
         }
     };
 
     return (
         <div className="rounded-2xl bg-card/50 p-6 ring-1 ring-foreground/10 backdrop-blur-sm">
             <AuthModal
-                isOpen={authModalOpen}
-                onClose={() => setAuthModalOpen(false)}
+                open={authModalOpen}
+                onOpenChange={setAuthModalOpen}
             />
 
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <h2 className="text-2xl font-bold">Отзывы</h2>
+                    <h2 className="text-2xl font-bold">{t('reviews.title')}</h2>
                     <div className="mt-2 flex items-center gap-2">
                         <div className="flex items-center gap-1">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -252,7 +269,7 @@ export function ProductReviews({
                             ))}
                         </div>
                         <span className="text-sm text-muted-foreground">
-                            {rating.toFixed(1)} из 5 ({reviewsCount} отзывов)
+                            {t('review_form.rating_out_of', { rating: rating.toFixed(1), count: reviewsCount })}
                         </span>
                     </div>
                 </div>
@@ -265,7 +282,7 @@ export function ProductReviews({
                                 className="cursor-pointer border-primary/40 bg-transparent transition-all hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_12px_rgba(16,185,129,0.3)]"
                             >
                                 <Pencil className="mr-2 h-4 w-4" />
-                                Изменить свой отзыв
+                                {t('review_form.edit_review')}
                             </Button>
                         ) : (
                             <Button
@@ -274,14 +291,14 @@ export function ProductReviews({
                                 disabled={!user || !isPurchased}
                                 title={
                                     !user
-                                        ? 'Войдите, чтобы оставить отзыв'
+                                        ? t('review_form.login_required')
                                         : !isPurchased
-                                        ? 'Вы должны приобрести этот продукт, чтобы оставить отзыв'
-                                        : 'Оставить отзыв'
+                                        ? t('review_form.purchase_required')
+                                        : t('review_form.leave_review')
                                 }
                                 className="cursor-pointer border-primary/40 bg-transparent transition-all hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_12px_rgba(16,185,129,0.3)] disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {!user ? 'Авторизуйтесь' : !isPurchased ? 'Вы должны приобрести этот продукт, чтобы оставить отзыв' : 'Оставить отзыв'}
+                                {!user ? t('auth:modal.login_title') : !isPurchased ? t('review_form.purchase_required') : t('review_form.write_review')}
                             </Button>
                         )}
                     </>
@@ -297,13 +314,13 @@ export function ProductReviews({
             {isFormOpen && (
                 <div className="mb-6 rounded-lg bg-muted/30 p-4">
                     <h3 className="mb-4 text-lg font-semibold">
-                        {isEditing ? 'Изменить свой отзыв' : 'Оставить отзыв'}
+                        {isEditing ? t('review_form.title_edit') : t('review_form.title_new')}
                     </h3>
 
                     {/* Rating selector */}
                     <div className="mb-4">
                         <label className="mb-2 block text-sm font-medium">
-                            Оценка *
+                            {t('review_form.rating_label')}
                         </label>
                         <div className="flex items-center gap-1">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -325,17 +342,17 @@ export function ProductReviews({
                     {/* Review text */}
                     <div className="mb-4">
                         <label className="mb-2 block text-sm font-medium">
-                            Ваш отзыв * (10-2000 символов)
+                            {t('review_form.review_label')}
                         </label>
                         <Textarea
                             value={reviewText}
                             onChange={(e) => setReviewText(e.target.value)}
-                            placeholder="Поделитесь своим опытом об этом продукте..."
+                            placeholder={t('review_form.review_placeholder')}
                             className="min-h-[120px] resize-none"
                             maxLength={2000}
                         />
                         <p className="mt-1 text-xs text-muted-foreground">
-                            {reviewText.length}/2000 символов
+                            {t('review_form.char_count', { current: reviewText.length, max: 2000 })}
                         </p>
                     </div>
 
@@ -347,10 +364,10 @@ export function ProductReviews({
                             className="bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                             {isSubmitting
-                                ? 'Отправка...'
+                                ? t('review_form.submitting')
                                 : isEditing
-                                ? 'Обновить отзыв'
-                                : 'Оставить отзыв'}
+                                ? t('review_form.submit_edit')
+                                : t('review_form.submit_new')}
                         </Button>
                         <Button
                             variant="outline"
@@ -360,7 +377,7 @@ export function ProductReviews({
                             }}
                             disabled={isSubmitting}
                         >
-                            Отмена
+                            {t('review_form.cancel')}
                         </Button>
                     </div>
                 </div>
@@ -369,7 +386,7 @@ export function ProductReviews({
             <div className="space-y-4">
                 {reviews.length === 0 ? (
                     <p className="py-8 text-center text-muted-foreground">
-                        Нет отзывов. Будьте первым, кто оставит отзыв о этом продукте!
+                        {t('review_form.no_reviews_message')}
                     </p>
                 ) : (
                     reviews.map((review) => (
@@ -404,7 +421,7 @@ export function ProductReviews({
                                             <span className="text-xs text-muted-foreground">
                                                 {new Date(
                                                     review.created_at,
-                                                ).toLocaleDateString('ru-RU')}
+                                                ).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US')}
                                             </span>
                                         </div>
                                     </div>
@@ -427,6 +444,27 @@ export function ProductReviews({
                     ))
                 )}
             </div>
+
+            <ConfirmationModal
+                open={deleteConfirmOpen}
+                onOpenChange={setDeleteConfirmOpen}
+                onConfirm={confirmDeleteReview}
+                title="Удалить отзыв"
+                description="Вы уверены, что хотите удалить этот отзыв? Это действие нельзя отменить."
+                confirmText="Удалить"
+                cancelText="Отмена"
+                variant="destructive"
+            />
+
+            <AlertModal
+                open={deleteErrorOpen}
+                onOpenChange={setDeleteErrorOpen}
+                title="Ошибка"
+                description={deleteErrorMessage}
+                type="error"
+                buttonText="OK"
+            />
         </div>
     );
 }
+

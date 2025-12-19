@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { AlertCircle, Wallet } from 'lucide-react';
 import { router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface InsufficientBalanceModalProps {
     product: {
@@ -33,6 +34,8 @@ export function InsufficientBalanceModal({
     open,
     onOpenChange,
 }: InsufficientBalanceModalProps) {
+    const { t } = useTranslation('products');
+    
     const handleTopUp = () => {
         onOpenChange(false);
         router.visit('/wallet');
@@ -44,10 +47,10 @@ export function InsufficientBalanceModal({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-destructive">
                         <AlertCircle className="h-5 w-5" />
-                        Недостаточно средств
+                        {t('insufficient_balance.title')}
                     </DialogTitle>
                     <DialogDescription>
-                        Пополните баланс для завершения покупки
+                        {t('insufficient_balance.description')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -55,8 +58,7 @@ export function InsufficientBalanceModal({
                     {/* Alert Message */}
                     <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
                         <p className="text-center text-sm text-foreground">
-                            К сожалению, на вашем балансе недостаточно средств
-                            для покупки этого товара
+                            {t('insufficient_balance.message')}
                         </p>
                     </div>
 
@@ -64,7 +66,7 @@ export function InsufficientBalanceModal({
                     <div className="space-y-2 rounded-lg border bg-muted/50 p-3">
                         <p className="font-medium">{product.name}</p>
                         <p className="text-sm text-muted-foreground">
-                            Стоимость: {product.formattedPrice}
+                            {t('insufficient_balance.product_cost')}: {product.formattedPrice}
                         </p>
                     </div>
 
@@ -72,7 +74,7 @@ export function InsufficientBalanceModal({
                     <div className="space-y-2 rounded-lg border bg-card p-3">
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                                Ваш баланс:
+                                {t('insufficient_balance.your_balance')}:
                             </span>
                             <span className="font-medium">
                                 {formattedBalance}
@@ -80,7 +82,7 @@ export function InsufficientBalanceModal({
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                                Требуется:
+                                {t('insufficient_balance.required')}:
                             </span>
                             <span className="font-medium">
                                 {product.formattedPrice}
@@ -90,7 +92,7 @@ export function InsufficientBalanceModal({
                         <div className="flex items-center justify-between">
                             <span className="flex items-center gap-1 text-sm font-medium text-destructive">
                                 <AlertCircle className="h-4 w-4" />
-                                Не хватает:
+                                {t('insufficient_balance.shortfall')}:
                             </span>
                             <span className="text-lg font-bold text-destructive">
                                 {formattedShortfall}
@@ -100,8 +102,7 @@ export function InsufficientBalanceModal({
 
                     {/* Info Message */}
                     <p className="rounded-lg bg-primary/10 p-3 text-center text-sm text-foreground">
-                        Пополните кошелек минимум на {formattedShortfall}, чтобы
-                        совершить покупку
+                        {t('insufficient_balance.top_up_message', { amount: formattedShortfall })}
                     </p>
                 </div>
 
@@ -111,7 +112,7 @@ export function InsufficientBalanceModal({
                         variant="outline"
                         onClick={() => onOpenChange(false)}
                     >
-                        Отмена
+                        {t('insufficient_balance.cancel_button')}
                     </Button>
                     <Button
                         type="button"
@@ -119,7 +120,7 @@ export function InsufficientBalanceModal({
                         className="gap-2"
                     >
                         <Wallet className="h-4 w-4" />
-                        Пополнить баланс
+                        {t('insufficient_balance.top_up_button')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

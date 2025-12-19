@@ -2,6 +2,7 @@ import AdminLayout from '@/layouts/admin-layout';
 import { Link, router } from '@inertiajs/react';
 import { Edit, Trash2, Wallet } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface User {
     id: number;
@@ -32,6 +33,7 @@ interface PageProps {
 
 export default function Index({ users, roles, filters }: PageProps) {
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+    const { t, i18n } = useTranslation('admin');
 
     const formatBalance = (balance?: number) => {
         if (!balance) return '₽0.00';
@@ -39,7 +41,8 @@ export default function Index({ users, roles, filters }: PageProps) {
     };
 
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('en-US', {
+        const locale = i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+        return new Date(date).toLocaleDateString(locale, {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -55,11 +58,11 @@ export default function Index({ users, roles, filters }: PageProps) {
     };
 
     return (
-        <AdminLayout title="User Management">
+        <AdminLayout title={t('users.title')}>
             <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Users</h1>
+                    <h1 className="text-2xl font-bold">{t('users.list_title')}</h1>
                 </div>
 
                 {/* Table */}
@@ -68,22 +71,22 @@ export default function Index({ users, roles, filters }: PageProps) {
                         <thead className="border-b bg-muted/50">
                             <tr>
                                 <th className="px-4 py-3 text-left text-sm font-medium">
-                                    User
+                                    {t('users.table.user')}
                                 </th>
                                 <th className="px-4 py-3 text-left text-sm font-medium">
-                                    Email
+                                    {t('users.table.email')}
                                 </th>
                                 <th className="px-4 py-3 text-left text-sm font-medium">
-                                    Roles
+                                    {t('users.table.roles')}
                                 </th>
                                 <th className="px-4 py-3 text-left text-sm font-medium">
-                                    Balance
+                                    {t('users.table.balance')}
                                 </th>
                                 <th className="px-4 py-3 text-left text-sm font-medium">
-                                    Registered
+                                    {t('users.table.registered')}
                                 </th>
                                 <th className="px-4 py-3 text-right text-sm font-medium">
-                                    Actions
+                                    {t('users.table.actions')}
                                 </th>
                             </tr>
                         </thead>
@@ -130,14 +133,14 @@ export default function Index({ users, roles, filters }: PageProps) {
                                                 className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                                             >
                                                 <Edit className="h-4 w-4" />
-                                                Edit
+                                                {t('users.actions.edit')}
                                             </Link>
                                             <Link
                                                 href={`/admin/users/${user.id}/wallet`}
                                                 className="inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent"
                                             >
                                                 <Wallet className="h-4 w-4" />
-                                                Wallet
+                                                {t('users.actions.wallet')}
                                             </Link>
                                             {deleteConfirm === user.id ? (
                                                 <div className="flex gap-1">
@@ -149,7 +152,7 @@ export default function Index({ users, roles, filters }: PageProps) {
                                                         }
                                                         className="inline-flex items-center gap-1 rounded-md bg-destructive px-3 py-1.5 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
                                                     >
-                                                        Confirm
+                                                        {t('users.actions.confirm_delete')}
                                                     </button>
                                                     <button
                                                         onClick={() =>
@@ -159,7 +162,7 @@ export default function Index({ users, roles, filters }: PageProps) {
                                                         }
                                                         className="inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent"
                                                     >
-                                                        Cancel
+                                                        {t('users.actions.cancel_delete')}
                                                     </button>
                                                 </div>
                                             ) : (
@@ -172,7 +175,7 @@ export default function Index({ users, roles, filters }: PageProps) {
                                                     className="inline-flex items-center gap-1 rounded-md border border-destructive px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive hover:text-destructive-foreground"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
-                                                    Delete
+                                                    {t('users.actions.delete')}
                                                 </button>
                                             )}
                                         </div>
@@ -187,7 +190,7 @@ export default function Index({ users, roles, filters }: PageProps) {
                 {users.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">
-                            Showing {users.data.length} of {users.total} users
+                            {t('users.pagination.showing', { count: users.data.length, total: users.total })}
                         </p>
                         <div className="flex gap-2">
                             {Array.from(

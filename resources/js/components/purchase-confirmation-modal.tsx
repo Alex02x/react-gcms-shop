@@ -8,6 +8,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { AlertCircle, CheckCircle2, ShoppingCart, Wallet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PurchaseConfirmationModalProps {
     product: {
@@ -40,13 +41,15 @@ export function PurchaseConfirmationModal({
     isProcessing,
     error,
 }: PurchaseConfirmationModalProps) {
+    const { t } = useTranslation('products');
+    
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <ShoppingCart className="h-5 w-5" />
-                        Подтверждение покупки
+                        {t('purchase.title')}
                     </DialogTitle>
                     <DialogDescription>
                         Пожалуйста, проверьте детали вашей покупки
@@ -79,7 +82,7 @@ export function PurchaseConfirmationModal({
                     <div className="space-y-2 rounded-lg border bg-card p-3">
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-muted-foreground">
-                                Текущий баланс:
+                                {t('purchase.current_balance')}:
                             </span>
                             <span className="font-medium">
                                 {formattedBalance}
@@ -97,7 +100,7 @@ export function PurchaseConfirmationModal({
                         <div className="flex items-center justify-between">
                             <span className="flex items-center gap-1 text-sm font-medium">
                                 <Wallet className="h-4 w-4" />
-                                Остаток после покупки:
+                                {t('purchase.balance_after')}:
                             </span>
                             <span className="text-lg font-bold text-emerald-500">
                                 {formattedRemainingBalance}
@@ -121,7 +124,7 @@ export function PurchaseConfirmationModal({
                         onClick={() => onOpenChange(false)}
                         disabled={isProcessing}
                     >
-                        Отмена
+                        {t('purchase.cancel_button')}
                     </Button>
                     <Button
                         type="button"
@@ -132,12 +135,12 @@ export function PurchaseConfirmationModal({
                         {isProcessing ? (
                             <>
                                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                Обработка...
+                                {t('purchase.processing')}
                             </>
                         ) : (
                             <>
                                 <CheckCircle2 className="h-4 w-4" />
-                                Подтвердить покупку
+                                {t('purchase.confirm_button')}
                             </>
                         )}
                     </Button>

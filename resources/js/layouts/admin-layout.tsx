@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Folder, LayoutDashboard, Package, Shield, Users } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -105,6 +106,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         )}
                     </div>
                     <div className="flex items-center gap-4">
+                        <ThemeToggle />
                         <Link
                             href="/"
                             className="text-sm text-muted-foreground hover:text-foreground"
